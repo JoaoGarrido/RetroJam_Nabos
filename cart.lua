@@ -56,7 +56,6 @@ function Engine:onCicleEnd()
 	--debug()
 	--Atualização de variáveis
 	t=t+1
-	timerTotal=timerTotal+1
 end
 
 function TIC()
