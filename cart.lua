@@ -7,7 +7,11 @@ t=0
 x=96
 y=24
 
+
+
 function TIC()
+
+
 
 	if btn(0) then y=y-1 end
 	if btn(1) then y=y+1 end
@@ -20,9 +24,66 @@ function TIC()
 	t=t+1
 end
 
+Engine = {_init = {}, _update = {}, _draw = {}, _uidraw = {}}
+
+function Engine:init()
+	if self._init == nil then
+		return
+	end
+	for i=1,#self._init do
+		self._init[i]()
+	end
+end
+
+function Engine:update()
+	if self._update == nil then return end
+	
+	for i = 1, #self._update do
+		self._update[i]() end
+end
+
+function Engine:draw()
+	cls(13)
+	--map((Level.LevelNumber%8)*30,  Level.reflected*17 + Level.LevelNumber//8*34)
+	if self._draw == nil then
+		return
+	end
+	for i = 1, #self._draw do
+		self._draw[i]()
+	end
+end
+
+function Engine:uidraw()
+	if UIENABLED then
+		if self._uidraw == nil then
+			return
+		end
+		for i = 1, #self._uidraw do
+			self._uidraw[i]()
+		end
+	end
+end
+
+function Engine:onCicleEnd()
+	--debug()
+	--Atualização de variáveis
+	t=t+1
+	timerTotal=timerTotal+1
+end
+
+function TIC()
+	if(t == 0) then
+		Engine:init()
+	end	
+	Engine:update()
+	Engine:draw()
+	Engine:uidraw()
+	Engine:onCicleEnd()
+end
+
 -- <TILES>
--- 001:eccccccccc888888caaaaaaaca888888cacccccccacc0ccccacc0ccccacc0ccc
--- 002:ccccceee8888cceeaaaa0cee888a0ceeccca0ccc0cca0c0c0cca0c0c0cca0c0c
+-- 001:eccccccccc888888caaaaaaaca888888cacccccccacc2ccccacc2ccccacc2ccc
+-- 002:ccccceee8888cceeaaaa0cee888a0ceeccca0ccc2cca0c0c2cca0c0c2cca0c0c
 -- 003:eccccccccc888888caaaaaaaca888888cacccccccacccccccacc0ccccacc0ccc
 -- 004:ccccceee8888cceeaaaa0cee888a0ceeccca0cccccca0c0c0cca0c0c0cca0c0c
 -- 017:cacccccccaaaaaaacaaacaaacaaaaccccaaaaaaac8888888cc000cccecccccec
