@@ -198,9 +198,10 @@ function GameState.draw()
 	if(GameState.scene == 0) then
 		print("Game scene", 60, 100)
 
+		map(30*(GameState.level % 8), 17+17*(math.floor(GameState.level/8)), 30, 17, 0, 0, 0, 1, nil) --colorkey 0 (sky stuff)
 
+		--Debug map
 		if (GameState.level == 0) then
-			map(0, 17, 30, 17, 0, 0, 0, 1, nil) --colorkey 0 (sky stuff)
 			print("Level 0", 60, 60)
 		elseif (GameState.level == 1) then
 			print("Level 1", 60, 60)
@@ -224,15 +225,19 @@ function GameState.draw()
 
 
 	elseif (GameState.scene == 1) then
+		map(30, 0, 30, 17, 0, 0, 0, 1, nil)
 		print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
+		map(60, 0, 30, 17, 0, 0, 0, 1, nil)
 		print("Victory", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 3) then
+		map(90, 0, 30, 17, 0, 0, 0, 1, nil)
 		print("Lost", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 4) then
-		rect(0, 0, 240, 136, 2) --menu background -- brown?
+		map(0, 0, 30, 17, 0, 0, 0, 1, nil)
+		--rect(0, 0, 240, 136, 2) --menu background -- brown?
 		--rectb(60, 34, 120, 68, 4) --menu border --white
 		local stringMainMenu = "NAME OF THE GAME"
 		local width = print(stringMainMenu, 0, -6)
