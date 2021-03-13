@@ -576,18 +576,11 @@ end
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------
-
-function printSkystuff()
-    print(peek(0x3fc0 + 11*3), 180, 98)
-    print(peek(0x3fc0 + 11*3+1), 180, 108)
-    print(peek(0x3fc0 + 11*3+2), 180, 118)
-end
-
 Engine = {
 	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
 	_draw = {GameState.draw, Semaphore.draw, Player.draw}, 
-	_uidraw = {shopMenu.draw, printSkystuff}
+	_uidraw = {shopMenu.draw}
 }
 
 function Engine:init()
