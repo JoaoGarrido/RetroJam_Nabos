@@ -94,13 +94,32 @@ function Menu_enum.draw()
 			print("PAUSED", 30, 20)
 		end
 	elseif (state_vars.game_state == 1) then
-	
 		print(Menu_enum[2],20, 5)
-    
 	end
+end
 
-    
-    
+active = 0
+function pressSpaceUI()
+    y = 120-50
+    x = 68-10
+    l = 10
+    w = 50
+
+    text = "SPACE"
+
+    if t%16 == 0 then
+        active = (active +1) %2
+    end
+
+    if(active == 0) then
+        rect(x, y, w, l, 14)
+        rect(x, y+l, w, l/2, 15)
+        print(text, x+w/2-(#text*3), y+1)
+    else
+        rect(x, y + l/2, w, l, 14)
+        rect(x, y+l + 3*l/8, w, l/4, 15)
+        print(text, x+w/2-(#text*3), y+1 + l/2)
+    end
 end
 
 function PauseMenu()
