@@ -7,12 +7,57 @@
 --CODE FROM HERE
 t=0
 
+-- game_state:
+	--0 -> Game scene
+	--1 -> Shop
+
+	--2 -> Menu
+--running_state: 0->paused | 1->running
+--level: level-identifier
+
+state_vars = {game_state = 0, running_state = 1, level = 0}
+
+
+--Menu 
+Menu_enum = {"Game scene", "Shop", "New game"}
+
+function Menu_enum.update()	
+	if (state_vars.game_state == 0) then
+		
+		if(keyp(49))	then --TAB to change to Shop
+			state_vars.game_state = 1
+		elseif (keyp(16)) then --P for pause
+			state_vars.running_state = (state_vars.running_state + 1) % 2
+		end
+	
+	elseif (state_vars.game_state == 1) then
+
+		if(keyp(49)) then --TAB to change to GameScene 
+			state_vars.game_state = 0
+		end
+
+	end
+end
+
+function Menu_enum.draw()
+	if (state_vars.game_state == 0) then
+
+		print(Menu_enum[1],20, 5)
+		if(state_vars.running_state == 0) then
+			print("PAUSED", 30, 20)
+		end
+	elseif (state_vars.game_state == 1) then
+	
+		print(Menu_enum[2],20, 5)
+
+	end
+end
+
 
 --CODE UNTIL HERE
 ------------------------
 
-
-Engine = {_init = {}, _update = {}, _draw = {}, _uidraw = {}}
+Engine = {_init = {}, _update = {Menu_enum.update}, _draw = {Menu_enum.draw}, _uidraw = {}}
 
 function Engine:init()
 	if self._init == nil then
@@ -27,7 +72,8 @@ function Engine:update()
 	if self._update == nil then return end
 	
 	for i = 1, #self._update do
-		self._update[i]() end
+		self._update[i]() 
+	end
 end
 
 function Engine:draw()
@@ -64,7 +110,7 @@ function TIC()
 	end	
 	Engine:update()
 	Engine:draw()
-	Engine:uidraw()
+	--Engine:uidraw()
 	Engine:onCicleEnd()
 end
 
