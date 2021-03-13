@@ -58,10 +58,11 @@ end
 --Menu----------------------------------------
 
 --scene:
-	--0 -> Game scene
-	--1 -> Shop
-	--2 -> Victory screen
-	--3 -> Lost screen
+	--0 -> Game scene		| (1,level)
+	--1 -> Shop				| (0,1)
+	--2 -> Victory screen	| (0,2)
+	--3 -> Lost screen		| (0,3)
+	--4 -> Main Screen		| (0,0)
 --running: 0->paused | 1->running
 --level: level id
 --battle:
@@ -69,10 +70,19 @@ end
 	--1 -> Won battle
 	--2 -> Lost battle
 MAX_LEVEL = 4
-GameState = {scene = 0, running = 1, level = 0, battle = 0}
+GameState = {scene = 4, running = 1, level = 0, battle = 0}
+
+function GameState.init()
+	resetGameScene()
+	actionGameScene(0)
+	GameState.scene = 4
+	GameState.running = 1
+	GameState.level = 0
+	GameState.battle = 0
+end
 
 function GameState.update()
-	if (GameState.scene == 0) then	--game scene
+	if (GameState.scene == 0) then		--game scene
 		
 		if (keyp(16)) then 	--P for pause
 			GameState.running = (GameState.running + 1) % 2
@@ -94,17 +104,20 @@ function GameState.update()
 			GameState.scene = 3
 		end
 
-	elseif (GameState.scene == 1)	then--shop		
+	elseif (GameState.scene == 1)	then	--shop		
 		--Add buy items logic
 		shopMenu.enabled = 1
 		goToGameSceneIfKey(14) --Press N to go to next level
+	elseif (GameState.scene == 4)	then	--main
+		if(keyp(48)) then --Press SPACE to start
+			actionGameScene(1)
+			GameState.scene = 0
+		end
 	else 									--victory/losing screen
 		actionGameScene(0)
 		resetGameScene(0)
 		if (keyp(19)) then --Press S to restart
-			GameState.battle = 0
-			GameState.level = 0
-			GameState.scene = 0
+			GameState.init()
 			actionGameScene(1)
 		end
 
@@ -118,7 +131,7 @@ function GameState.draw()
 
 
 		if (GameState.level == 0) then
-			--map()
+			--map(136, 0, 136, 240, )
 			print("Level 0", 60, 60)
 		elseif (GameState.level == 1) then
 			print("Level 1", 60, 60)
@@ -147,6 +160,15 @@ function GameState.draw()
 	elseif (GameState.scene == 3) then
 		print("Lost", 60, 80)
 		print("Press S to restart", 60, 100)
+	elseif (GameState.scene == 4) then
+		rect(0, 0, 240, 136, 2) --menu background -- brown?
+		--rectb(60, 34, 120, 68, 4) --menu border --white
+		local stringMainMenu = "NAME OF THE GAME"
+		local width = print(stringMainMenu, 0, -6)
+		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 1, false, 2)
+		stringStart = "Press btn to start!"
+		local widthStart = print(stringStart, 0, -6)
+		print(stringStart, (240-widthStart)//2, (136-6)//2, 1, false, 1)
 	end    
 end
 
@@ -394,7 +416,7 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
-	_init = {Semaphore.init, Player.init, shopMenu.init}, 
+	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
 	_draw = {Semaphore.draw, Player.draw, shopMenu.draw}, 
 	_uidraw = {GameState.draw}
