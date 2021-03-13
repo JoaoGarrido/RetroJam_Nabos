@@ -311,7 +311,7 @@ end
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 5},
+    {"Old McDuff", 30},
     {"Senile Ms Johnson", 29},
     {"\"Not so old\" Jack", 27},
     {"Crooked John", 25},
