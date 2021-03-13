@@ -64,7 +64,12 @@ end
 	--3 -> Lost screen
 --running: 0->paused | 1->running
 --level: level id
-GameState = {scene = 0, running = 1, level = 0}
+--battle:
+	--0 -> Waiting for battle
+	--1 -> Won battle
+	--2 -> Lost battle
+MAX_LEVEL = 4
+GameState = {scene = 0, running = 1, level = 0, battle = 0}
 
 function GameState.update()
 	if (GameState.scene == 0) then	--game scene
@@ -74,26 +79,30 @@ function GameState.update()
 			actionGameScene(GameState.running)
 		end
 		
-		if(Player.fireState == 2 and GameState.level < 4) then 	--before last level
+		if (GameState.battle == 1 and GameState.level < MAX_LEVEL) then			--won before last level
 			resetGameScene()
-			GameState.level = GameState.level + 1
-		elseif(Player.fireState == 2 and GameState.level == 4) then--last level and won
+			actionGameScene(0)
+			if(keyp(19)) then		--Press S to go to shop
+				GameState.scene = 1
+			end
+			goToGameSceneIfKey(14)	--Press N to go to next level
+		elseif (GameState.battle == 1 and GameState.level == MAX_LEVEL) then 	--won last level
 			resetGameScene()
 			GameState.scene = 2
-		elseif (Player.fireState > 2 or Player.fireState == 1) then	--died
+		elseif (GameState.battle == 2) then										--lost
 			resetGameScene()
 			GameState.scene = 3
 		end
 
-	elseif (GameState.scene == 1)	then--shop
-		actionGameScene(0)
-		resetGameScene(0)
-
-
+	elseif (GameState.scene == 1)	then--shop		
+		--Add buy items logic
+		
+		goToGameSceneIfKey(14) --Press N to go to next level
 	else 									--victory/losing screen
 		actionGameScene(0)
 		resetGameScene(0)
-		if (keyp(19)) then --PLACEHOLDER for restart
+		if (keyp(19)) then --Press S to restart
+			GameState.battle = 0
 			GameState.level = 0
 			GameState.scene = 0
 			actionGameScene(1)
@@ -103,12 +112,10 @@ function GameState.update()
 end
 
 function GameState.draw()
+	print(GameState.scene)
 	if(GameState.scene == 0) then
-		print("Game scene", 60, 80)
-		pressSpaceUI()
-		if(GameState.running == 0) then
-			pauseMenu()
-		end
+		print("Game scene", 60, 100)
+
 
 		if (GameState.level == 0) then
 			--map()
@@ -123,8 +130,17 @@ function GameState.draw()
 			print("Level 4", 60, 60)
 		end
 
+		pressSpaceUI()
+
+		if (GameState.battle == 1) then
+			wonDuel()
+		elseif(GameState.running == 0) then
+			pauseMenu()
+		end
+
+
 	elseif (GameState.scene == 1) then
-		print("Shop", 60, 80)
+		print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
 		print("Victory", 60, 80)
 		print("Press S to restart", 60, 100)
@@ -132,6 +148,15 @@ function GameState.draw()
 		print("Lost", 60, 80)
 		print("Press S to restart", 60, 100)
 	end    
+end
+
+function goToGameSceneIfKey(key)
+	if(keyp(key)) then
+		GameState.battle = 0
+		GameState.scene = 0
+		GameState.level = GameState.level + 1
+		actionGameScene(1)
+	end
 end
 
 active = 0
@@ -166,6 +191,10 @@ function pauseMenu()
     print(unpauseMess, 120 - ((#unpauseMess-2) * 3), 78)
 end
 
+function wonDuel()
+
+end
+
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 
@@ -184,11 +213,14 @@ function Player.update()
             if Semaphore.wasActivated == 1 then
                 if Semaphore.opponentHasFired == 1 then
                     Player.fireState = 3 -- fired after opponent
+					GameState.battle = 2
                 else
                     Player.fireState = 2 -- fired before opponent
+					GameState.battle = 1
                 end
             else
                 Player.fireState = 1 --before time
+				GameState.battle = 2
             end
         end
     end
@@ -207,6 +239,7 @@ function Player.draw()
         elseif Player.fireState == 3 then  -- late (state 3)
             print("shot too late...", 64, 0)
         else --shot timeout (state 4)
+			GameState.battle = 2 --HOTFIX SPAGHETTI
             print("Not quick enought!", 64, 0)
         end 
 
