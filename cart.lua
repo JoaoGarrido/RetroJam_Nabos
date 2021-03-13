@@ -45,7 +45,7 @@ function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midda
 end
 
 targetDayStage = -8
-function skyUpdate()
+function SkyUpdate()
     if keyp(61) then --7
         targetDayStage = currDayStage + 1
         changePallette(targetDayStage)
@@ -57,76 +57,80 @@ end
 
 --Menu----------------------------------------
 
--- game_state:
+--scene:
 	--0 -> Game scene
 	--1 -> Shop
 	--2 -> Victory screen
 	--3 -> Lost screen
---running_state: 0->paused | 1->running
+--running: 0->paused | 1->running
 --level: level id
-state_vars = {game_state = 0, running_state = 1, level = 0}
-Menu_enum = {}
+GameState = {scene = 0, running = 1, level = 0}
 
-function Menu_enum.update()
-	if (state_vars.game_state == 0) then	--game scene
+function GameState.update()
+	if (GameState.scene == 0) then	--game scene
 		
 		if (keyp(16)) then 	--P for pause
-			state_vars.running_state = (state_vars.running_state + 1) % 2
+			GameState.running = (GameState.running + 1) % 2
+			actionGameScene(GameState.running)
 		end
 		
-		if(Player.fireState == 2 and state_vars.level < 4) then 	--before last level
-			resetState()
-			state_vars.level = state_vars.level + 1
-		elseif(Player.fireState == 2 and state_vars.level == 4) then--last level and won
-			resetState()
-			state_vars.game_state = 2
+		if(Player.fireState == 2 and GameState.level < 4) then 	--before last level
+			resetGameScene()
+			GameState.level = GameState.level + 1
+		elseif(Player.fireState == 2 and GameState.level == 4) then--last level and won
+			resetGameScene()
+			GameState.scene = 2
 		elseif (Player.fireState > 2 or Player.fireState == 1) then	--died
-			resetState()
-			state_vars.game_state = 3
+			resetGameScene()
+			GameState.scene = 3
 		end
 
-	elseif (state_vars.game_state == 1)	then--shop
-
+	elseif (GameState.scene == 1)	then--shop
+		actionGameScene(0)
+		resetGameScene(0)
 
 
 	else 									--victory/losing screen
-
-		if (keyp(10)) then --PLACEHOLDER for restart
-			state_vars.level = 0
-			state_vars.game_state = 0
+		actionGameScene(0)
+		resetGameScene(0)
+		if (keyp(19)) then --PLACEHOLDER for restart
+			GameState.level = 0
+			GameState.scene = 0
+			actionGameScene(1)
 		end
 
 	end
 end
 
-function Menu_enum.draw()
-	if(state_vars.game_state == 0) then
+function GameState.draw()
+	if(GameState.scene == 0) then
 		print("Game scene", 60, 80)
-		if(state_vars.running_state == 0) then
-			print("PAUSED", 30, 20)
+		pressSpaceUI()
+		if(GameState.running == 0) then
+			pauseMenu()
 		end
 
-		if (state_vars.level == 0) then
+		if (GameState.level == 0) then
 			--map()
 			print("Level 0", 60, 60)
-		elseif (state_vars.level == 1) then
+		elseif (GameState.level == 1) then
 			print("Level 1", 60, 60)
-		elseif (state_vars.level == 2) then
+		elseif (GameState.level == 2) then
 			print("Level 2", 60, 60)
-		elseif (state_vars.level == 3) then
+		elseif (GameState.level == 3) then
 			print("Level 3", 60, 60)
-		elseif (state_vars.level == 4) then
+		elseif (GameState.level == 4) then
 			print("Level 4", 60, 60)
 		end
 
-	elseif (state_vars.game_state == 1) then
+	elseif (GameState.scene == 1) then
 		print("Shop", 60, 80)
-	elseif (state_vars.game_state == 2) then
+	elseif (GameState.scene == 2) then
 		print("Victory", 60, 80)
-		print("Press PLACEHOLDER to restart")
-	elseif (state_vars.game_state == 3) then
+		print("Press S to restart", 60, 100)
+	elseif (GameState.scene == 3) then
 		print("Lost", 60, 80)
-		print("Press PLACEHOLDER to restart")
+		print("Press S to restart", 60, 100)
 	end    
 end
 
@@ -154,7 +158,7 @@ function pressSpaceUI()
     end
 end
 
-function PauseMenu()
+function pauseMenu()
     rect(60, 34, 120, 68, 3) --menu background -- brown?
     rectb(60, 34, 120, 68, 4) --menu border --white
     print("PAUSED", 102, 50)
@@ -175,7 +179,7 @@ function Player.init()
 end
 
 function Player.update()
-    if Player.enabled == 1 and state_vars.running_state == 1 then 
+    if Player.enabled == 1 then 
         if keyp(48) and Player.fireState == 0 then --spacebar
             if Semaphore.wasActivated == 1 then
                 if Semaphore.opponentHasFired == 1 then
@@ -222,7 +226,7 @@ function Semaphore.init()
 end
 
 function Semaphore.update()
-    if Semaphore.enabled == 1 and state_vars.running_state == 1 then --maybe only allow stopping if not in duel?
+    if Semaphore.enabled == 1 then --maybe only allow stopping if not in duel?
         if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
             Semaphore.wasActivated = 1
             Semaphore.currTime = 0
@@ -256,19 +260,25 @@ function Semaphore.draw()
     end
 end
 
-function resetState()
+function resetGameScene()
 	Semaphore.init()	
 	Player.init()
 end
+
+function actionGameScene(p)
+	Semaphore.enabled = p
+	Player.enabled = p
+end
+
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
 	_init = {Semaphore.init, Player.init}, 
-	_update = {skyUpdate, Semaphore.update, Player.update, Menu_enum.update}, 
+	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update}, 
 	_draw = {Semaphore.draw, Player.draw}, 
-	_uidraw = {Menu_enum.draw}
+	_uidraw = {GameState.draw}
 }
 
 function Engine:init()
