@@ -494,9 +494,9 @@ end
 
 Engine = {
 	_init = {savePalette, Semaphore.init, Player.init, shopMenu.init}, 
-	_update = {shopMenu.update},--{SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
-	_draw = {},--{Semaphore.draw, Player.draw, shopMenu.draw}, 
-	_uidraw = {shopMenu.draw}--{GameState.draw}
+	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
+	_draw = {Semaphore.draw, Player.draw, shopMenu.draw}, 
+	_uidraw = {GameState.draw}
 }
 
 function Engine:init()
