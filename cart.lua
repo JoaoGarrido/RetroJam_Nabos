@@ -112,7 +112,7 @@ function Player.init()
 end
 
 function Player.update()
-    if Player.enabled == 1 then 
+    if Player.enabled == 1 and state_vars.running_state == 1 then 
         if keyp(48) and Player.fireState == 0 then --spacebar
             if Semaphore.wasActivated == 1 then
                 if Semaphore.opponentHasFired == 1 then
@@ -158,7 +158,7 @@ function Semaphore.init()
 end
 
 function Semaphore.update()
-    if Semaphore.enabled == 1 then
+    if Semaphore.enabled == 1 and state_vars.running_state == 1 then --maybe only allow stopping if not in duel?
         if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
             Semaphore.wasActivated = 1
             Semaphore.currTime = 0
