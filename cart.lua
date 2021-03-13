@@ -31,7 +31,7 @@ paletteTiles = {
     {0x00, 0x00, 0x00},
     {0x00, 0x00, 0x00},
     {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00}
 }
 
 paletteSprites = {
@@ -54,32 +54,26 @@ paletteSprites = {
 }
 
 function savePalette()
-    for i = 1, #paletteSprites do 
-        paletteTiles[i][0] = peek(0x3fc0 + 3*(i-1))
-        paletteTiles[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
-        paletteTiles[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
+    for i = 1, #paletteTiles do 
+        paletteTiles[i][0] = peek(0x3fc0 + 3*(i))
+        paletteTiles[i][1] = peek(0x3fc0 + 3*(i) + 1)
+        paletteTiles[i][2] = peek(0x3fc0 + 3*(i) + 2)
     end
 end
 
 function swapPalette(tilePaletteSelected)
     if tilePaletteSelected == 0 then
         for i = 1, #paletteSprites do 
-            paletteTiles[i][0] = peek(0x3fc0 + 3*(i))
-            poke(0x3fc0 + 3 * (i), paletteSprites[i][0])
-            paletteTiles[i][1] = peek(0x3fc0 + 3*(i) + 1)
-            poke(0x3fc0 + 3 * (i) + 1, paletteSprites[i][0] + 1)
-            paletteTiles[i][2] = peek(0x3fc0 + 3*(i) + 2)
-            poke(0x3fc0 + 3 * (i) + 2, paletteSprites[i][0] + 2)
+            poke(0x3fc0 + (3 * (i)), paletteSprites[i][1])
+            poke(0x3fc0 + (3 * (i) + 1), paletteSprites[i][2])
+            poke(0x3fc0 + (3 * (i) + 2), paletteSprites[i][3])
         end
     else
 
         for i = 1, #paletteTiles do 
-            paletteSprites[i][0] = peek(0x3fc0 + 3*(i))
-            poke(0x3fc0 + 3 * (i), paletteTiles[i][0])
-            paletteSprites[i][1] = peek(0x3fc0 + 3*(i) + 1)
-            poke(0x3fc0 + 3 * (i) + 1, paletteTiles[i][0] + 1)
-            paletteSprites[i][2] = peek(0x3fc0 + 3*(i) + 2)
-            poke(0x3fc0 + 3 * (i) + 2, paletteTiles[i][0] + 2)
+            poke(0x3fc0 + (3 * (i)), paletteTiles[i][1]) 
+            poke(0x3fc0 + (3 * (i) + 1), paletteTiles[i][2])
+            poke(0x3fc0 + (3 * (i) + 2), paletteTiles[i][3])
         end
     end
 end
@@ -856,4 +850,3 @@ end
 -- <PALETTE>
 -- 000:0418205d275db13e53eec6beffcd75a7f07038b764257179c2711c3014104c28105089b6f4f4f494b0c2566c86000404
 -- </PALETTE>
-
