@@ -96,8 +96,15 @@ function Menu_enum.draw()
 	elseif (state_vars.game_state == 1) then
 	
 		print(Menu_enum[2],20, 5)
-
+    
 	end
+
+    
+    rect(60, 34, 120, 68, 3) --menu background -- brown?
+    rectb(60, 34, 120, 68, 4) --menu border --white
+    print("PAUSED", 102, 50)
+    unpauseMess = "Press 'p' to unpause"
+    print(unpauseMess, 120 - ((#unpauseMess-2) * 3), 78)
 end
 
 --Duel mechanics------------------------------------------------------
