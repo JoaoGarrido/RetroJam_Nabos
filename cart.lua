@@ -8,30 +8,104 @@
 t=0
 
 
+Player = {reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent)
+Semaphore = {initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
+
+function Player.init()
+    Player.reactionSpeed = 0
+    Player.fireState = 0
+end
+
+function Player.update()
+    if btn(2) and Player.fireState == 0 then --spacebar
+        if Semaphore.wasActivated == 1 then
+            if Semaphore.opponentHasFired == 1 then
+                Player.fireState = 3 -- fired after opponent
+            else
+                Player.fireState = 2 -- fired before opponent
+            end
+        else
+            Player.fireState = 1 --before time
+        end
+    end
+end 
+
+function Player.draw()
+    print("Fire state:", 0 , 0)
+    
+    if Player.fireState == 0 then        -- not yet
+        print("hasn't shot", 64, 0)
+    elseif Player.fireState == 1 then        --early
+        print("shot before time!", 64, 0)
+    elseif Player.fireState == 2 then   -- on time
+        print("shot on time!", 64, 0)
+    else                                -- late
+        print("shot too late...", 64, 0)
+    end 
+
+    print(Player.reactionSpeed, 148, 0)
+end
+
+function Semaphore.init()
+    Semaphore.initDelay = math.random(60, 180)
+    Semaphore.wasActivated = 0
+    Semaphore.currTime = 0
+end
+
+function Semaphore.update()
+    if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
+        Semaphore.wasActivated = 1
+        Semaphore.currTime = 0
+    else
+        Semaphore.currTime = Semaphore.currTime + 1
+    end
+
+
+
+    if Semaphore.wasActivated == 1 and Player.fireState == 0 then
+        Player.reactionSpeed = Player.reactionSpeed + 1
+        if Player.reactionSpeed > Semaphore.opponentTime then
+            Semaphore.opponentHasFired = 1
+        end
+    end
+end
+
+function Semaphore.draw()
+    if Semaphore.wasActivated == 0 then
+        print("Don't", 0 , 24)
+    else
+        print("Fire!", 0, 24)
+    end
+
+    print(Semaphore.currTime, 128, 64)
+end
+
 --CODE UNTIL HERE
 ------------------------
 
-
-Engine = {_init = {}, _update = {}, _draw = {}, _uidraw = {}}
+Engine = {_init = {Semaphore.init, Player.init}, _update = {Semaphore.update, Player.update}, _draw = {Semaphore.draw, Player.draw}, _uidraw = {}}
 
 function Engine:init()
 	if self._init == nil then
 		return
 	end
-	for i=1,#self._init do
+	for i=1, #self._init do
 		self._init[i]()
 	end
 end
 
 function Engine:update()
-	if self._update == nil then return end
-	
+	if self._update == nil then
+        return
+    end
 	for i = 1, #self._update do
-		self._update[i]() end
+		self._update[i]() 
+    end
 end
 
 function Engine:draw()
 	cls(13)
+    
 	--map((Level.LevelNumber%8)*30,  Level.reflected*17 + Level.LevelNumber//8*34)
 	if self._draw == nil then
 		return
@@ -54,6 +128,8 @@ end
 
 function Engine:onCicleEnd()
 	--debug()
+
+
 	--Atualização de variáveis
 	t=t+1
 end
