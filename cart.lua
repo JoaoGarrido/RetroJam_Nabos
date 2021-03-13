@@ -83,6 +83,7 @@ function GameState.init()
 	GameState.battle = 0
 end
 
+timeout = 0
 function GameState.update()
 	if (GameState.scene == 0) then		--game scene
 		
@@ -100,10 +101,18 @@ function GameState.update()
 			goToGameSceneIfKey(14)	--Press N to go to next level
 		elseif (GameState.battle == 1 and GameState.level == MAX_LEVEL) then 	--won last level
 			resetGameScene()
-			GameState.scene = 2
+			timeout = timeout + 1
+			if(timeout == 300) then
+				GameState.scene = 2
+				timeout = 0
+			end
 		elseif (GameState.battle == 2) then										--lost
 			resetGameScene()
-			GameState.scene = 3
+			timeout = timeout + 1
+			if(timeout == 300) then
+				GameState.scene = 3
+				timeout = 0
+			end
 		end
 
 	elseif (GameState.scene == 1)	then	--shop		
@@ -148,8 +157,6 @@ function GameState.draw()
     
         --cowboys here --yeehaw
 
-
-
         --sneaky (not so sneaky) space bar update
         if(Semaphore.wasActivated == 1 and GameState.battle == 0) then
             spacebarUIEnable = 1
@@ -158,13 +165,52 @@ function GameState.draw()
         end
 		pressSpaceUI()
 
-		if (GameState.battle == 1) then
+		local default_cowboy = {
+			l_x = 0,
+			r_x = 220,
+			y = 100,
+			colorkey = 0,
+			scale = 1,
+			l_flip = 0,
+			r_flip = 1,
+			rotate = 0,
+			w = 2,
+			h = 4,
+		}
+		if (GameState.battle == 0 and GameState.running == 1) then
+			l_cowboy_id	= 256
+			r_cowboy_id	= 320
+		elseif (GameState.battle == 1) then
+			l_cowboy_id	= 258
+			r_cowboy_id = 324
 			wonDuel()
+		elseif (GameState.battle == 2) then
+			l_cowboy_id	= 260
+			r_cowboy_id	= 322
 		elseif(GameState.running == 0) then
 			pauseMenu()
 		end
 
-
+		spr(l_cowboy_id,
+			default_cowboy.l_x,
+			default_cowboy.y, 
+			default_cowboy.colorkey,
+			default_cowboy.scale,
+			default_cowboy.l_flip,
+			default_cowboy.rotate,
+			default_cowboy.w,
+			default_cowboy.h
+		)
+		spr(r_cowboy_id,
+			default_cowboy.r_x,
+			default_cowboy.y, 
+			default_cowboy.colorkey,
+			default_cowboy.scale,
+			default_cowboy.r_flip,
+			default_cowboy.rotate,
+			default_cowboy.w,
+			default_cowboy.h
+		)
 	elseif (GameState.scene == 1) then
 		map(30, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Shop", 60, 100)
