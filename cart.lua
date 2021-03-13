@@ -100,6 +100,7 @@ function Menu_enum.draw()
 	end
 end
 
+--Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 
 Player = {reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent)
