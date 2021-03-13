@@ -3,13 +3,59 @@
 -- desc:   short description
 -- script: lua
 
-----------------
---CODE FROM HERE
-t=0
+----------------------------------------------------------------------------------------------------------------------------------------
+--CODE FROM HERE------------------------------------------------------------------------------------------------------------------------
+t = 0
+UIENABLED = 1
 
 
+--Sky color offset----------------------------------------
 
---Menu 
+middayOffset = {-0x43, -0x5A, -0x0D}
+sunsetOffset = {0xCF, -0x40, -0xBA}
+currDayStage = -8
+function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midday 7 is sunset
+    while currDayStage > targetDayStage and currDayStage > -7 do
+        if currDayStage > 0 then --[0:7]
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (sunsetOffset[1] / 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (sunsetOffset[2] / 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (sunsetOffset[3] / 8))
+        elseif currDayStage > -8 then --[-8 : -1]
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (middayOffset[1] / 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (middayOffset[2] / 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (middayOffset[3] / 8))
+        end
+        currDayStage = currDayStage - 1
+    end
+
+    while currDayStage < targetDayStage and currDayStage < 6 do
+        if currDayStage < 0 then --[-8:-1]
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (middayOffset[1] / 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (middayOffset[2] / 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (middayOffset[3] / 8))
+        elseif currDayStage < 7 then --[0-7]
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (sunsetOffset[1] / 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (sunsetOffset[2] / 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (sunsetOffset[3] / 8))
+        end
+        currDayStage = currDayStage + 1
+    end
+
+    targetDayStage = currDayStage
+end
+
+targetDayStage = -8
+function skyUpdate()
+    if keyp(61) then --7
+        targetDayStage = currDayStage + 1
+        changePallette(targetDayStage)
+    elseif keyp(60) then
+        targetDayStage = currDayStage - 1
+        changePallette(targetDayStage)
+    end    
+end
+
+--Menu----------------------------------------
 
 -- game_state:
 	--0 -> Game scene
@@ -54,7 +100,7 @@ function Menu_enum.draw()
 	end
 end
 
---Player
+--Player----------------------------------------
 
 Player = {reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent)
 Semaphore = {initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
@@ -65,7 +111,7 @@ function Player.init()
 end
 
 function Player.update()
-    if btn(2) and Player.fireState == 0 then --spacebar
+    if keyp(48) and Player.fireState == 0 then --spacebar
         if Semaphore.wasActivated == 1 then
             if Semaphore.opponentHasFired == 1 then
                 Player.fireState = 3 -- fired after opponent
@@ -92,9 +138,11 @@ function Player.draw()
     end 
 
     print(Player.reactionSpeed, 148, 0)
+
+    print(targetDayStage, 164, 64) --for sky debug --to remove
 end
 
---Semaphore
+--Semaphore----------------------------------------
 
 function Semaphore.init()
     Semaphore.initDelay = math.random(60, 180)
@@ -109,8 +157,6 @@ function Semaphore.update()
     else
         Semaphore.currTime = Semaphore.currTime + 1
     end
-
-
 
     if Semaphore.wasActivated == 1 and Player.fireState == 0 then
         Player.reactionSpeed = Player.reactionSpeed + 1
@@ -130,14 +176,14 @@ function Semaphore.draw()
     print(Semaphore.currTime, 128, 64)
 end
 
---CODE UNTIL HERE
-------------------------
+--CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
 	_init = {Semaphore.init, Player.init}, 
-	_update = {Semaphore.update, Player.update, Menu_enum.update}, 
-	_draw = {Semaphore.draw, Player.draw, Menu_enum.draw}, 
-	_uidraw = {}
+	_update = {skyUpdate, Semaphore.update, Player.update, Menu_enum.update}, 
+	_draw = {Semaphore.draw, Player.draw}, 
+	_uidraw = {Menu_enum.draw}
 }
 
 function Engine:init()
@@ -159,7 +205,7 @@ function Engine:update()
 end
 
 function Engine:draw()
-	cls(13)
+	cls(11)
     
 	--map((Level.LevelNumber%8)*30,  Level.reflected*17 + Level.LevelNumber//8*34)
 	if self._draw == nil then
@@ -195,7 +241,7 @@ function TIC()
 	end	
 	Engine:update()
 	Engine:draw()
-	--Engine:uidraw()
+	Engine:uidraw()
 	Engine:onCicleEnd()
 end
 
