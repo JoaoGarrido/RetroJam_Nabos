@@ -311,7 +311,7 @@ end
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 30},
+    {"Old McDuff", 5},
     {"Senile Ms Johnson", 29},
     {"\"Not so old\" Jack", 27},
     {"Crooked John", 25},
@@ -417,10 +417,10 @@ function Semaphore.init()
     Semaphore.wasActivated = 0
     Semaphore.currTime = 0
 	Semaphore.opponentHasFired = 0
-    if GameState.level == 0 then
+    if GameState.level > #opponents then
         Semaphore.opponentTime = 25 --default value
     else
-        Semaphore.opponentTime = opponents[GameState.level][2]
+        Semaphore.opponentTime = opponents[GameState.level+1][2]
     end 
 end
 
@@ -453,7 +453,8 @@ function Semaphore.draw()
         else
             print("Fire!", 0, 24)
         end
-
+        print(opponents[GameState.level+1][1], 128, 78)
+        print(opponents[GameState.level+1][2], 128, 88)
         print(Semaphore.currTime, 128, 64)
     end
 end
