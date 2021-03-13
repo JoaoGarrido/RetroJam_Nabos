@@ -96,7 +96,7 @@ function GameState.update()
 
 	elseif (GameState.scene == 1)	then--shop		
 		--Add buy items logic
-		
+		shopMenu.enabled = 1
 		goToGameSceneIfKey(14) --Press N to go to next level
 	else 									--victory/losing screen
 		actionGameScene(0)
@@ -155,6 +155,7 @@ function goToGameSceneIfKey(key)
 		GameState.battle = 0
 		GameState.scene = 0
 		GameState.level = GameState.level + 1
+		shopMenu.enabled = 0
 		actionGameScene(1)
 	end
 end
@@ -327,66 +328,75 @@ shoppingList = { --bought, name, price, sprite?
     {0, "Gun 9", 45},
 }
 
-shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0} 
+shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0, enabled = 0} 
 --shopMenu
     --capacity: how many are shown at a time
     --selectedIndex: what item is currently selected 
 
+function shopMenu.init()
+	topmostIndex = 1
+	selectedIndex = 1
+	enabled = 0
+end
 
 function shopMenu.update()
-    if keyp(2) then--b to buy
-        --verify if got money
-    elseif keyp(58) then --up scroll
-        if(shopMenu.topmostIndex == shopMenu.selectedIndex and shopMenu.topmostIndex > 1) then--scroll up
-            shopMenu.topmostIndex = shopMenu.topmostIndex - 1
-            shopMenu.selectedIndex = shopMenu.selectedIndex - 1
-        elseif shopMenu.selectedIndex > 1 then
-            shopMenu.selectedIndex = shopMenu.selectedIndex - 1
-        end
-    elseif keyp(59) then --down scroll
-        if((shopMenu.topmostIndex + shopMenu.capacity) == shopMenu.selectedIndex and  shopMenu.selectedIndex < #shoppingList) then
-            shopMenu.topmostIndex = shopMenu.topmostIndex + 1
-            shopMenu.selectedIndex = shopMenu.selectedIndex + 1
-        elseif shopMenu.selectedIndex < #shoppingList then
-            shopMenu.selectedIndex  = shopMenu.selectedIndex + 1;
-        end
-    end
+	if (shopMenu.enabled == 1) then
+		if keyp(2) then--b to buy
+			--verify if got money
+		elseif keyp(58) then --up scroll
+			if(shopMenu.topmostIndex == shopMenu.selectedIndex and shopMenu.topmostIndex > 1) then--scroll up
+				shopMenu.topmostIndex = shopMenu.topmostIndex - 1
+				shopMenu.selectedIndex = shopMenu.selectedIndex - 1
+			elseif shopMenu.selectedIndex > 1 then
+				shopMenu.selectedIndex = shopMenu.selectedIndex - 1
+			end
+		elseif keyp(59) then --down scroll
+			if((shopMenu.topmostIndex + shopMenu.capacity) == shopMenu.selectedIndex and  shopMenu.selectedIndex < #shoppingList) then
+				shopMenu.topmostIndex = shopMenu.topmostIndex + 1
+				shopMenu.selectedIndex = shopMenu.selectedIndex + 1
+			elseif shopMenu.selectedIndex < #shoppingList then
+				shopMenu.selectedIndex  = shopMenu.selectedIndex + 1;
+			end
+		end
+	end
 end
 
 function shopMenu.draw()
-    rect(60, 17, 120, 90, 3) --menu background -- brown?
-    rectb(60, 17, 120, 90, 4) --menu border --white
-    print("SHOP", 120, 25)
-    if(shopMenu.topmostIndex > 1) then --if can be scrolled up
-        print("/\\", 120-#"/\\"*3+2, 35)
-    end
+	if (shopMenu.enabled == 1) then
+		rect(60, 17, 120, 90, 3) --menu background -- brown?
+		rectb(60, 17, 120, 90, 4) --menu border --white
+		print("SHOP", 120, 25)
+		if(shopMenu.topmostIndex > 1) then --if can be scrolled up
+			print("/\\", 120-#"/\\"*3+2, 35)
+		end
 
-    for i = 0, shopMenu.capacity do
-        if i + shopMenu.topmostIndex <= #shoppingList then
-            print(shoppingList[i+shopMenu.topmostIndex][2], 120 - #shoppingList[i+shopMenu.topmostIndex][2] * 3 + 2, 45 + 10* i)
-            --add sprite
-        end
-    end
+		for i = 0, shopMenu.capacity do
+			if i + shopMenu.topmostIndex <= #shoppingList then
+				print(shoppingList[i+shopMenu.topmostIndex][2], 120 - #shoppingList[i+shopMenu.topmostIndex][2] * 3 + 2, 45 + 10* i)
+				--add sprite
+			end
+		end
 
-    print(">", 64, 45 + (shopMenu.selectedIndex - shopMenu.topmostIndex) * 10)
+		print(">", 64, 45 + (shopMenu.selectedIndex - shopMenu.topmostIndex) * 10)
 
-    if(shopMenu.topmostIndex < #shoppingList-shopMenu.capacity) then --if can be scrolled up
-        print("\\/", 120-#"\\/"*3+2, 95)
-    end
+		if(shopMenu.topmostIndex < #shoppingList-shopMenu.capacity) then --if can be scrolled up
+			print("\\/", 120-#"\\/"*3+2, 95)
+		end
 
-    print(shopMenu.capacity, 0, 25)
-    print(shopMenu.topmostIndex, 0, 35)
-    print(shopMenu.selectedIndex, 0 , 45)
-    print(#shoppingList, 0, 55)
+		print(shopMenu.capacity, 0, 25)
+		print(shopMenu.topmostIndex, 0, 35)
+		print(shopMenu.selectedIndex, 0 , 45)
+		print(#shoppingList, 0, 55)
+	end
 end
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
-	_init = {Semaphore.init, Player.init}, 
-	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update}, 
-	_draw = {Semaphore.draw, Player.draw}, 
+	_init = {Semaphore.init, Player.init, shopMenu.init}, 
+	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
+	_draw = {Semaphore.draw, Player.draw, shopMenu.draw}, 
 	_uidraw = {GameState.draw}
 }
 
