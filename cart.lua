@@ -348,6 +348,11 @@ function Semaphore.init()
     Semaphore.wasActivated = 0
     Semaphore.currTime = 0
 	Semaphore.opponentHasFired = 0
+    if GameState.level == 0 then
+        Semaphore.opponentTime = 25 --default value
+    else
+        Semaphore.opponentTime = opponents[GameState.level][2]
+    end 
 end
 
 function Semaphore.update()
@@ -355,7 +360,6 @@ function Semaphore.update()
         if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
             Semaphore.wasActivated = 1
             Semaphore.currTime = 0
-            --also change visual queue
         else
             Semaphore.currTime = Semaphore.currTime + 1
         end
