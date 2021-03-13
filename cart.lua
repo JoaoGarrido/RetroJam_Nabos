@@ -11,96 +11,34 @@ UIENABLED = 1
 
 --Sky color offset----------------------------------------
 
+original = {0x50, 0x89, 0xB6}
 middayOffset = {-0x43, -0x5A, -0x0D}
-sunsetOffset = {0xCF, -0x40, -0xBA}
+sunsetOffset = {0xBE, -0x40, -0xA9}
 currDayStage = -8
-
-paletteTiles = {
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00},
-    {0x00, 0x00, 0x00}
-}
-
-paletteSprites = {
-    {0x04,0x18,0x20},
-    {0x5D,0x27,0x5D},
-    {0xDE,0x3E,0x53},
-    {0xEE,0xC6,0xBE},
-    {0xFF,0xCD,0x75},
-    {0x00,0xD6,0x00},
-    {0x38,0xB7,0x64},
-    {0x00,0x85,0x28},
-    {0x29,0x36,0x6F},
-    {0x3B,0x5D,0xC9},
-    {0x75,0x3C,0x08},
-    {0xD2,0x6D,0x08},
-    {0xF4,0xF4,0xF4},
-    {0x94,0xB0,0xC2},
-    {0x59,0x65,0x89},
-    {0x00,0x04,0x04}
-}
-
-function savePalette()
-    for i = 1, #paletteTiles do 
-        paletteTiles[i][0] = peek(0x3fc0 + 3*(i))
-        paletteTiles[i][1] = peek(0x3fc0 + 3*(i) + 1)
-        paletteTiles[i][2] = peek(0x3fc0 + 3*(i) + 2)
-    end
-end
-
-function swapPalette(tilePaletteSelected)
-    if tilePaletteSelected == 0 then
-        for i = 1, #paletteSprites do 
-            poke(0x3fc0 + (3 * (i)), paletteSprites[i][1])
-            poke(0x3fc0 + (3 * (i) + 1), paletteSprites[i][2])
-            poke(0x3fc0 + (3 * (i) + 2), paletteSprites[i][3])
-        end
-    else
-
-        for i = 1, #paletteTiles do 
-            poke(0x3fc0 + (3 * (i)), paletteTiles[i][1]) 
-            poke(0x3fc0 + (3 * (i) + 1), paletteTiles[i][2])
-            poke(0x3fc0 + (3 * (i) + 2), paletteTiles[i][3])
-        end
-    end
-end
 
 function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midday 7 is sunset
     while currDayStage > targetDayStage and currDayStage > -7 do
         if currDayStage > 0 then --[0:7]
-            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (sunsetOffset[1] / 8))
-            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (sunsetOffset[2] / 8))
-            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (sunsetOffset[3] / 8))
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (sunsetOffset[1] // 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (sunsetOffset[2] // 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (sunsetOffset[3] // 8))
         elseif currDayStage > -8 then --[-8 : -1]
-            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (middayOffset[1] / 8))
-            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (middayOffset[2] / 8))
-            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (middayOffset[3] / 8))
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (middayOffset[1] // 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (middayOffset[2] // 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (middayOffset[3] // 8))
         end
         currDayStage = currDayStage - 1
     end
 
     while currDayStage < targetDayStage and currDayStage < 6 do
         if currDayStage < 0 then --[-8:-1]
-            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (middayOffset[1] / 8))
-            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (middayOffset[2] / 8))
-            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (middayOffset[3] / 8))
-        elseif currDayStage < 7 then --[0-7]
-            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (sunsetOffset[1] / 8))
-            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (sunsetOffset[2] / 8))
-            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (sunsetOffset[3] / 8))
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (middayOffset[1] // 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (middayOffset[2] // 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (middayOffset[3] // 8))
+        elseif currDayStage < 5 then --[0-7]
+            poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (sunsetOffset[1] // 8))
+            poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (sunsetOffset[2] // 8))
+            poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (sunsetOffset[3] // 8))
         end
         currDayStage = currDayStage + 1
     end
@@ -192,7 +130,7 @@ function GameState.draw()
 	if(GameState.scene == 0) then
 		print("Game scene", 60, 100)
 
-		map(30*(GameState.level % 8), 17+17*(math.floor(GameState.level/8)), 30, 17, 0, 0, 0, 1, nil) --colorkey 0 (sky stuff)
+		map(30*(GameState.level % 8), 17+17*(math.floor(GameState.level/8)), 30, 17, 0, 0, 11, 1, nil) --colorkey 0 (sky stuff)
 
 		--Debug map
 		if (GameState.level == 0) then
@@ -207,8 +145,17 @@ function GameState.draw()
 			print("Level 4", 60, 60)
 		end
 
-        --cowboys here
+    
+        --cowboys here --yeehaw
 
+
+
+        --sneaky (not so sneaky) space bar update
+        if(Semaphore.wasActivated == 1 and GameState.battle == 0) then
+            spacebarUIEnable = 1
+        else
+            spacebarUIEnable = 0
+        end
 		pressSpaceUI()
 
 		if (GameState.battle == 1) then
@@ -219,18 +166,18 @@ function GameState.draw()
 
 
 	elseif (GameState.scene == 1) then
-		map(30, 0, 30, 17, 0, 0, 0, 1, nil)
+		map(30, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
-		map(60, 0, 30, 17, 0, 0, 0, 1, nil)
+		map(60, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Victory", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 3) then
-		map(90, 0, 30, 17, 0, 0, 0, 1, nil)
+		map(90, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Lost", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 4) then
-		map(0, 0, 30, 17, 0, 0, 0, 1, nil)
+		map(0, 0, 30, 17, 0, 0, 11, 1, nil)
 		--rect(0, 0, 240, 136, 2) --menu background -- brown?
 		--rectb(60, 34, 120, 68, 4) --menu border --white
 		local stringMainMenu = "NAME OF THE GAME"
@@ -252,17 +199,21 @@ function goToGameSceneIfKey(key)
 	end
 end
 
+spacebarUIEnable = 0
 active = 0
 function pressSpaceUI()
-    y = 120-50
-    x = 68-10
-    l = 10
+    x = 120 -25
+    y = 120
     w = 50
+    l = 10
+
 
     text = "SPACE"
 
-    if t%16 == 0 then
-        active = (active +1) %2
+    if(spacebarUIEnable == 1) then
+        if t%4 == 0 then
+            active = (active +1) %2
+        end
     end
 
     if(active == 0) then
@@ -353,6 +304,44 @@ function Player.draw()
 end
 
 --Semaphore----------------------------------------
+
+function drawVisualQueues()
+    if(GameState.level == 0) then
+        if(Semaphore.wasActivated == 0) then
+            --not activated idle animations
+        else
+            --queue activation
+        end
+    end
+    if(GameState.level == 1) then
+        if(Semaphore.wasActivated == 0) then
+            --not activated idle animations
+        else
+            --queue activation
+        end
+    end
+    if(GameState.level == 2) then
+        if(Semaphore.wasActivated == 0) then
+            --not activated idle animations
+        else
+            --queue activation
+        end
+    end
+    if(GameState.level == 3) then
+        if(Semaphore.wasActivated == 0) then
+            --not activated idle animations
+        else
+            --queue activation
+        end
+    end
+    if(GameState.level == 4) then
+        if(Semaphore.wasActivated == 0) then
+            --not activated idle animations
+        else
+            --queue activation
+        end
+    end
+end
 
 function Semaphore.init()
     Semaphore.initDelay = math.random(60, 180)
@@ -516,7 +505,7 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
-	_init = {savePalette, Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
+	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
 	_draw = {GameState.draw, Semaphore.draw, Player.draw}, 
 	_uidraw = {shopMenu.draw}
