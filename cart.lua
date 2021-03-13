@@ -168,6 +168,16 @@ end
 
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
+opponents = { --may need overwritten visual options
+    {"Old McDuff", 30},
+    {"Senile Ms Johnson", 29},
+    {"\"Not so old\" Jack", 27},
+    {"Crooked John", 25},
+    {"Doc Richard", 23},
+    {"\"Young\" Galen Young", 21},
+    {"\"Fastest gun in the west\"", 19},
+    {"The silver rider", 17}
+}
 
 --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
 Player = {enabled = 1, reactionSpeed = 0, fireState = 0} 
@@ -271,14 +281,80 @@ function actionGameScene(p)
 end
 
 
+dollars = 0
+shoppingList = { --bought, name, price, sprite?
+    {0, "Gun 1", 5},
+    {0, "Gun 2", 10},
+    {0, "Gun 3", 15},
+    {0, "Gun 4", 20},
+    {0, "Gun 5", 25},
+    {0, "Gun 6", 30},
+    {0, "Gun 7", 35},
+    {0, "Gun 8", 40},
+    {0, "Gun 9", 45},
+}
+
+shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0} 
+--shopMenu
+    --capacity: how many are shown at a time
+    --selectedIndex: what item is currently selected 
+
+
+function shopMenu.update()
+    if keyp(2) then--b to buy
+        --verify if got money
+    elseif keyp(58) then --up scroll
+        if(shopMenu.topmostIndex == shopMenu.selectedIndex and shopMenu.topmostIndex > 1) then--scroll up
+            shopMenu.topmostIndex = shopMenu.topmostIndex - 1
+            shopMenu.selectedIndex = shopMenu.selectedIndex - 1
+        elseif shopMenu.selectedIndex > 1 then
+            shopMenu.selectedIndex = shopMenu.selectedIndex - 1
+        end
+    elseif keyp(59) then --down scroll
+        if((shopMenu.topmostIndex + shopMenu.capacity) == shopMenu.selectedIndex and  shopMenu.selectedIndex < #shoppingList) then
+            shopMenu.topmostIndex = shopMenu.topmostIndex + 1
+            shopMenu.selectedIndex = shopMenu.selectedIndex + 1
+        elseif shopMenu.selectedIndex < #shoppingList then
+            shopMenu.selectedIndex  = shopMenu.selectedIndex + 1;
+        end
+    end
+end
+
+function shopMenu.draw()
+    rect(60, 17, 120, 90, 3) --menu background -- brown?
+    rectb(60, 17, 120, 90, 4) --menu border --white
+    print("SHOP", 120, 25)
+    if(shopMenu.topmostIndex > 1) then --if can be scrolled up
+        print("/\\", 120-#"/\\"*3+2, 35)
+    end
+
+    for i = 0, shopMenu.capacity do
+        if i + shopMenu.topmostIndex <= #shoppingList then
+            print(shoppingList[i+shopMenu.topmostIndex][2], 120 - #shoppingList[i+shopMenu.topmostIndex][2] * 3 + 2, 45 + 10* i)
+            --add sprite
+        end
+    end
+
+    print(">", 64, 45 + (shopMenu.selectedIndex - shopMenu.topmostIndex) * 10)
+
+    if(shopMenu.topmostIndex < #shoppingList-shopMenu.capacity) then --if can be scrolled up
+        print("\\/", 120-#"\\/"*3+2, 95)
+    end
+
+    print(shopMenu.capacity, 0, 25)
+    print(shopMenu.topmostIndex, 0, 35)
+    print(shopMenu.selectedIndex, 0 , 45)
+    print(#shoppingList, 0, 55)
+end
+
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
 	_init = {Semaphore.init, Player.init}, 
-	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update}, 
-	_draw = {Semaphore.draw, Player.draw}, 
-	_uidraw = {GameState.draw}
+	_update = {shopMenu.update},--{SkyUpdate, Semaphore.update, Player.update, GameState.update}, 
+	_draw = {shopMenu.draw},--{Semaphore.draw, Player.draw, shopMenu.draw}, 
+	_uidraw = {}--GameState.draw}
 }
 
 function Engine:init()
@@ -480,3 +556,4 @@ end
 -- <PALETTE>
 -- 000:0418205d275db13e53eec6beffcd75a7f07038b76425717929366f3b5dc9753c0873eff7f4f4f494b0c2566c86000404
 -- </PALETTE>
+
