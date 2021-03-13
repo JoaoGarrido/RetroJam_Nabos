@@ -103,8 +103,8 @@ end
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 
-Player = {reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent)
-Semaphore = {initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
+Player = {enabled = 1, reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
+Semaphore = {enabled = 1, initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
 
 function Player.init()
     Player.reactionSpeed = 0
@@ -112,35 +112,41 @@ function Player.init()
 end
 
 function Player.update()
-    if keyp(48) and Player.fireState == 0 then --spacebar
-        if Semaphore.wasActivated == 1 then
-            if Semaphore.opponentHasFired == 1 then
-                Player.fireState = 3 -- fired after opponent
+    if Player.enabled == 1 then 
+        if keyp(48) and Player.fireState == 0 then --spacebar
+            if Semaphore.wasActivated == 1 then
+                if Semaphore.opponentHasFired == 1 then
+                    Player.fireState = 3 -- fired after opponent
+                else
+                    Player.fireState = 2 -- fired before opponent
+                end
             else
-                Player.fireState = 2 -- fired before opponent
+                Player.fireState = 1 --before time
             end
-        else
-            Player.fireState = 1 --before time
         end
     end
 end 
 
 function Player.draw()
-    print("Fire state:", 0 , 0)
-    
-    if Player.fireState == 0 then        -- not yet
-        print("hasn't shot", 64, 0)
-    elseif Player.fireState == 1 then        --early
-        print("shot before time!", 64, 0)
-    elseif Player.fireState == 2 then   -- on time
-        print("shot on time!", 64, 0)
-    else                                -- late
-        print("shot too late...", 64, 0)
-    end 
+    if Player.enabled == 1 then
+        print("Fire state:", 0 , 0)
+        
+        if Player.fireState == 0 then        -- not yet
+            print("hasn't shot", 64, 0)
+        elseif Player.fireState == 1 then        --early
+            print("shot before time!", 64, 0)
+        elseif Player.fireState == 2 then   -- on time
+            print("shot on time!", 64, 0)
+        elseif Player.fireState == 3 then  -- late (state 3)
+            print("shot too late...", 64, 0)
+        else --shot timeout (state 4)
+            print("Not quick enought!", 64, 0)
+        end 
 
-    print(Player.reactionSpeed, 148, 0)
+        print(Player.reactionSpeed, 164, 0)
 
-    print(targetDayStage, 164, 64) --for sky debug --to remove
+        print(targetDayStage, 164, 64) --for sky debug --to remove
+    end
 end
 
 --Semaphore----------------------------------------
@@ -152,29 +158,38 @@ function Semaphore.init()
 end
 
 function Semaphore.update()
-    if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
-        Semaphore.wasActivated = 1
-        Semaphore.currTime = 0
-    else
-        Semaphore.currTime = Semaphore.currTime + 1
-    end
-
-    if Semaphore.wasActivated == 1 and Player.fireState == 0 then
-        Player.reactionSpeed = Player.reactionSpeed + 1
-        if Player.reactionSpeed > Semaphore.opponentTime then
-            Semaphore.opponentHasFired = 1
+    if Semaphore.enabled == 1 then
+        if Semaphore.wasActivated == 0 and Semaphore.initDelay < Semaphore.currTime then
+            Semaphore.wasActivated = 1
+            Semaphore.currTime = 0
+            --also change visual queue
+        else
+            Semaphore.currTime = Semaphore.currTime + 1
         end
+
+        if Semaphore.wasActivated == 1 and Player.fireState == 0 then
+            Player.reactionSpeed = Player.reactionSpeed + 1
+            if Player.reactionSpeed > Semaphore.opponentTime then
+                Semaphore.opponentHasFired = 1
+            end
+            if(Player.reactionSpeed > Semaphore.opponentTime + 10) then --if player shot timed out --should be around 10
+                Player.fireState = 4
+            end
+        end 
     end
 end
 
 function Semaphore.draw()
-    if Semaphore.wasActivated == 0 then
-        print("Don't", 0 , 24)
-    else
-        print("Fire!", 0, 24)
-    end
+    if(Semaphore.enabled == 1) then
+        --show visual queue
+        if Semaphore.wasActivated == 0 then
+            print("Don't", 0 , 24)
+        else
+            print("Fire!", 0, 24)
+        end
 
-    print(Semaphore.currTime, 128, 64)
+        print(Semaphore.currTime, 128, 64)
+    end
 end
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
