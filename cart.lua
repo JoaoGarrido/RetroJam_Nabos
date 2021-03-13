@@ -14,6 +14,79 @@ UIENABLED = 1
 middayOffset = {-0x43, -0x5A, -0x0D}
 sunsetOffset = {0xCF, -0x40, -0xBA}
 currDayStage = -8
+
+paletteTiles = {
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+}
+
+paletteSprites = {
+    {0x04,0x18,0x20},
+    {0x5D,0x27,0x5D},
+    {0xDE,0x3E,0x53},
+    {0xEE,0xC6,0xBE},
+    {0xFF,0xCD,0x75},
+    {0x00,0xD6,0x00},
+    {0x38,0xB7,0x64},
+    {0x00,0x85,0x28},
+    {0x29,0x36,0x6F},
+    {0x3B,0x5D,0xC9},
+    {0x75,0x3C,0x08},
+    {0xD2,0x6D,0x08},
+    {0xF4,0xF4,0xF4},
+    {0x94,0xB0,0xC2},
+    {0x59,0x65,0x89},
+    {0x00,0x04,0x04}
+}
+
+function savePalette()
+    for i = 1, #paletteSprites do 
+        paletteTiles[i][0] = peek(0x3fc0 + 3*(i-1))
+        paletteTiles[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
+        paletteTiles[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
+    end
+end
+
+function swapPalette(tilePaletteSelected)
+    if tilePaletteSelected == 0 then
+        tilePaletteSelected = 1
+
+        for i = 1, #paletteSprites do 
+            paletteTiles[i][0] = peek(0x3fc0 + 3*(i-1))
+            poke(0x3fc0 + 3 * (i-1), paletteSprites[i][0])
+            paletteTiles[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
+            poke(0x3fc0 + 3 * (i-1) + 1, paletteSprites[i][0] + 1)
+            paletteTiles[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
+            poke(0x3fc0 + 3 * (i-1) + 2, paletteSprites[i][0] + 2)
+        end
+    else
+        tilePaletteSelected = 0
+
+        for i = 1, #paletteTiles do 
+            paletteSprites[i][0] = peek(0x3fc0 + 3*(i-1))
+            poke(0x3fc0 + 3 * (i-1), paletteTiles[i][0])
+            paletteSprites[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
+            poke(0x3fc0 + 3 * (i-1) + 1, paletteTiles[i][0] + 1)
+            paletteSprites[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
+            poke(0x3fc0 + 3 * (i-1) + 2, paletteTiles[i][0] + 2)
+        end
+    end
+end
+
 function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midday 7 is sunset
     while currDayStage > targetDayStage and currDayStage > -7 do
         if currDayStage > 0 then --[0:7]
@@ -315,20 +388,32 @@ function actionGameScene(p)
 end
 
 
-dollars = 0
+dollars = 500
 shoppingList = { --bought, name, price, sprite?
-    {0, "Gun 1", 5},
-    {0, "Gun 2", 10},
-    {0, "Gun 3", 15},
-    {0, "Gun 4", 20},
-    {0, "Gun 5", 25},
-    {0, "Gun 6", 30},
-    {0, "Gun 7", 35},
-    {0, "Gun 8", 40},
-    {0, "Gun 9", 45},
+    --Consumables (?) --add lives?
+    {0, "Watermelon", 5, 0464},
+    {0, "Broccoli", 5, 0465},
+    {0, "Cherries", 5, 0467},
+    {0, "Eggplant", 5, 0468},
+    {0, "Strawberry", 5, 0469},
+    {0, "Wine", 20, 0470},
+    {0, "Soda", 10, 0471},
+    {0, "Sandwich", 10, 0472},
+    {0, "Scotch", 30, 0473},
+    --Weapons
+    {0, "Duck Head", 50, 0432},
+    {0, "Crossbow", 50, 0434},
+    {0, "SlingShot", 50, 452},
+    {0, "Shiny Revolver", 45, 0448},
+    {0, "Marble fade", 45, 0449},
+    {0, "Thomson", 45, 0450},
+    {0, "Poison Kunai", 45, 0451},
+    {0, "'Nade", 75, 0435},
+    {0, "Uzi", 75, 436},
+    {0, "Ray gun", 150, 0433},
 }
 
-shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0, enabled = 0} 
+shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0, enabled = 1} 
 --shopMenu
     --capacity: how many are shown at a time
     --selectedIndex: what item is currently selected 
@@ -341,8 +426,12 @@ end
 
 function shopMenu.update()
 	if (shopMenu.enabled == 1) then
-		if keyp(2) then--b to buy
-			--verify if got money
+		if keyp(2) then --b to buy
+            if(dollars > shoppingList[ shopMenu.selectedIndex][3] and shoppingList[ shopMenu.selectedIndex][1]==0) then
+                dollars = dollars - shoppingList[shopMenu.selectedIndex][3]
+                shoppingList[shopMenu.selectedIndex][1] = 1
+                --insert item effects here
+            end
 		elseif keyp(58) then --up scroll
 			if(shopMenu.topmostIndex == shopMenu.selectedIndex and shopMenu.topmostIndex > 1) then--scroll up
 				shopMenu.topmostIndex = shopMenu.topmostIndex - 1
@@ -363,9 +452,10 @@ end
 
 function shopMenu.draw()
 	if (shopMenu.enabled == 1) then
-		rect(60, 17, 120, 90, 3) --menu background -- brown?
-		rectb(60, 17, 120, 90, 4) --menu border --white
-		print("SHOP", 120, 25)
+		rect(50, 17, 140, 90, 3) --menu background -- brown?
+		rectb(50, 17, 140, 90, 4) --menu border --white
+
+		print("SHOP", 120 - #"SHOP" * 3 + 2, 25)
 		if(shopMenu.topmostIndex > 1) then --if can be scrolled up
 			print("/\\", 120-#"/\\"*3+2, 35)
 		end
@@ -373,20 +463,29 @@ function shopMenu.draw()
 		for i = 0, shopMenu.capacity do
 			if i + shopMenu.topmostIndex <= #shoppingList then
 				print(shoppingList[i+shopMenu.topmostIndex][2], 120 - #shoppingList[i+shopMenu.topmostIndex][2] * 3 + 2, 45 + 10* i)
-				--add sprite
+                if shoppingList[i + shopMenu.topmostIndex][4] ~= -1 then
+                    spr(shoppingList[i + shopMenu.topmostIndex][4], 64, 44 + 10 * i, 0, 1, 0, 0, 1, 1)
+                end
+
+                print(shoppingList[i+shopMenu.topmostIndex][3], 160, 45 + 10* i)
+                print("$", 180, 45 + 10* i)
+
+                if(shoppingList[i+shopMenu.topmostIndex][1] == 1) then
+                    line(50 + 35, 47 + 10*i, 50 + 140 - 35, 47 + 10 * i, 15)
+                end
 			end
 		end
 
-		print(">", 64, 45 + (shopMenu.selectedIndex - shopMenu.topmostIndex) * 10)
+		print(">", 54, 45 + (shopMenu.selectedIndex - shopMenu.topmostIndex) * 10)
 
 		if(shopMenu.topmostIndex < #shoppingList-shopMenu.capacity) then --if can be scrolled up
 			print("\\/", 120-#"\\/"*3+2, 95)
 		end
 
-		print(shopMenu.capacity, 0, 25)
-		print(shopMenu.topmostIndex, 0, 35)
-		print(shopMenu.selectedIndex, 0 , 45)
-		print(#shoppingList, 0, 55)
+        rect(120 - 30, 136 - 28, 60, 10, 3)
+        rectb(120 - 30, 136 - 28, 60, 10, 4)
+        print("$", 120-25, 136 -25)
+        print(dollars, 120 - 15, 136 - 25)
 	end
 end
 
@@ -394,10 +493,10 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 Engine = {
-	_init = {Semaphore.init, Player.init, shopMenu.init}, 
-	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
-	_draw = {Semaphore.draw, Player.draw, shopMenu.draw}, 
-	_uidraw = {GameState.draw}
+	_init = {savePalette, Semaphore.init, Player.init, shopMenu.init}, 
+	_update = {shopMenu.update},--{SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
+	_draw = {},--{Semaphore.draw, Player.draw, shopMenu.draw}, 
+	_uidraw = {shopMenu.draw}--{GameState.draw}
 }
 
 function Engine:init()
@@ -541,17 +640,27 @@ end
 -- 121:9999900099999900999999000009990000099900000999000008880000088880
 -- 122:0000399900009999000099990000999000089990008889900088899000888880
 -- 123:9999900099999000999990000009900000099000000888000008888000088880
--- 176:aaffa00eaaaaa00eacfcf00eac444440cc40000acc44444acc00000acc00000e
--- 177:00000000deddeeeeeeeee000aa0e0000aaee0000a0000000e0000000e0000000
--- 178:daaaa0aade00aa0a00e004a0000e0a4a0000e00a004a0e0004a400e00a40000e
--- 179:a0000000a0000000a000000000000000a0000000a0000000a0000000a0000000
--- 192:0e000000deeeddeeeeeeee00022e0e00222ee0002200000022000000dd000000
--- 193:01000000ee00000c000000cd000e0cde0000ede0000b9e0000b980e000980000
--- 194:cc000000dd00d000e00eeeee000ddddd000edaaa00dde4a400de000000e00000
--- 195:00000000d0000000ee000000dd00000000000000000000000000000000000000
--- 208:c2f2222cc2222f2cc222222c522f22255c2222c565cccc567666666777777777
+-- 176:aaffa000aaaaa000acfcf000ac444440cc400000cc444440cc00000022000000
+-- 177:e000000be6e66eebeeeeee000aa0e000aaaee000aa000000ad000000dd000000
+-- 178:0aaaa0aa0e00aa0a00e00ba0000e0aba0000e00a00aa0e0a0aba00ea0ba00000
+-- 179:0000000000ffff000f0df000f0077000f0766700007667000076670000077000
+-- 180:b44bbbb0deeeeebbeeeeeeb00eede0000aa000000ad000000ad000000ad00000
+-- 192:0e00000b8ee88eeeeeeeee000aa0ee00aaaee000aa000000aa00000088000000
+-- 193:000000cd00000cdd0000cde00e0cde0000ede000098e00009810e00081000000
+-- 194:00000000000d00d0088888880ddddddd08daaa00dd8bab00d800000080000000
+-- 195:00000065000006560000656000f6560000ff6000aabff000a0a00000aaa00000
+-- 196:00aa000000a0d00000a00d0000a000d000a0000a0aaaaaaaaba00000ba000000
+-- 208:00000000c2f2222cc2222f2c522f22255c2222c565cccc567666666777777777
 -- 209:0076650007655650765765656566565576767767070760700006500000075000
--- 210:00000075000007570000757000f7570000ff7000aa2ff000a0a00000aaa00000
+-- 210:0007600001176110117766111116611111111131111133110111111000111100
+-- 211:00007770000707000070070000700220022022c222c202222222022002200000
+-- 212:0000600600007667000011600011c17611cd1110111111101111110001111000
+-- 213:0022500702c227500c2255702222262022422222222242222422222012221000
+-- 214:c111111cc2c2222cc2c2222cc111111c0c1111c000c11c00000cc00000cccc00
+-- 215:0000000000dded0002222220022223c00cc3cc30033222200222222000dded00
+-- 216:00000a0acc444a4a02cc44440222cc44cc5522cc00cc22220000cc55000000cc
+-- 217:000ff000000ee000000cc00000aaaa0000a33a0000c33c0000a33a0000aaaa00
+-- 224:00999900999fcf00909444000999999009944990099449900c9009c000200200
 -- </SPRITES>
 
 -- <MAP>
