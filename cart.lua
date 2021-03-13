@@ -65,6 +65,7 @@ end
 --running_state: 0->paused | 1->running
 --level: level id
 state_vars = {game_state = 0, running_state = 1, level = 0}
+Menu_enum = {}
 
 function Menu_enum.update()
 	if (state_vars.game_state == 0) then	--game scene
@@ -127,6 +128,30 @@ function Menu_enum.draw()
 		print("Lost", 60, 80)
 		print("Press PLACEHOLDER to restart")
 	end    
+end
+
+active = 0
+function pressSpaceUI()
+    y = 120-50
+    x = 68-10
+    l = 10
+    w = 50
+
+    text = "SPACE"
+
+    if t%16 == 0 then
+        active = (active +1) %2
+    end
+
+    if(active == 0) then
+        rect(x, y, w, l, 14)
+        rect(x, y+l, w, l/2, 15)
+        print(text, x+w/2-(#text*3), y+1)
+    else
+        rect(x, y + l/2, w, l, 14)
+        rect(x, y+l + 3*l/8, w, l/4, 15)
+        print(text, x+w/2-(#text*3), y+1 + l/2)
+    end
 end
 
 function PauseMenu()
