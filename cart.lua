@@ -8,12 +8,32 @@
 t = 0
 UIENABLED = 1
 
+palettTiles = "0418205d275db13e53eec6beffcd75a7f07038b764257179c2711c3014104c28105089b6f4f4f494b0c2566c86000404"
+
+palettSprites = "0418205d275dde3e53eec6beffcd7500d60038b76400852829366f3b5dc9753c08d26d08f4f4f494b0c2596589000404"
+
+
+currPalett = 0 
+function swapPalette()
+    paladr = 0x3FC0
+    if(currPalett == 0) then
+        for i=1, palettSprites:len() , 2 do
+            poke(paladr,tonumber("0x"..palettSprites:sub(i,i)..palettSprites:sub(i+1,i+1)))
+            paladr=paladr+1
+        end
+    else
+        for i=1, palettTiles:len() , 2 do
+            poke(paladr,tonumber("0x"..palettTiles:sub(i,i)..palettTiles:sub(i+1,i+1)))
+            paladr=paladr+1
+        end
+    end
+end
 
 --Sky color offset----------------------------------------
 
 original = {0x50, 0x89, 0xB6}
 middayOffset = {-0x43, -0x5A, -0x0D}
-sunsetOffset = {0xBE, -0x40, -0xA9}
+sunsetOffset = {0xE5, 0x32, -0x14} --to F2 61 95
 currDayStage = -8
 
 function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midday 7 is sunset
@@ -22,12 +42,14 @@ function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midda
             poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (sunsetOffset[1] // 8))
             poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (sunsetOffset[2] // 8))
             poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (sunsetOffset[3] // 8))
+            currDayStage = currDayStage - 1
         elseif currDayStage > -8 then --[-8 : -1]
             poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) - (middayOffset[1] // 8))
             poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) - (middayOffset[2] // 8))
             poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) - (middayOffset[3] // 8))
+            currDayStage = currDayStage - 1
         end
-        currDayStage = currDayStage - 1
+        
     end
 
     while currDayStage < targetDayStage and currDayStage < 6 do
@@ -35,12 +57,13 @@ function changePallette(targetDayStage)-- -8 is morning (regular colors) 0 midda
             poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (middayOffset[1] // 8))
             poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (middayOffset[2] // 8))
             poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (middayOffset[3] // 8))
-        elseif currDayStage < 5 then --[0-7]
+            currDayStage = currDayStage + 1
+        elseif currDayStage < 7 then --[0-7]
             poke(0x3fc0 + (11 * 3), peek(0x3fc0 + 11*3) + (sunsetOffset[1] // 8))
             poke(0x3fc0 + (11 * 3 + 1), peek(0x3fc0 + 11*3 + 1) + (sunsetOffset[2] // 8))
             poke(0x3fc0 + (11 * 3 + 2), peek(0x3fc0 + 11*3 + 2) + (sunsetOffset[3] // 8))
+            currDayStage = currDayStage + 1
         end
-        currDayStage = currDayStage + 1
     end
 
     targetDayStage = currDayStage
@@ -510,7 +533,7 @@ end
 
 function shopMenu.draw()
 	if (shopMenu.enabled == 1) then
-        --swapPalette(0)
+        swapPalette(0)
 
 		rect(50, 17, 140, 90, 3) --menu background -- brown?
 		rectb(50, 17, 140, 90, 4) --menu border --white
@@ -547,18 +570,24 @@ function shopMenu.draw()
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
 
-        --swapPalette(1)
+        swapPalette(1)
 	end
 end
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
+function printSkystuff()
+    print(peek(0x3fc0 + 11*3), 180, 98)
+    print(peek(0x3fc0 + 11*3+1), 180, 108)
+    print(peek(0x3fc0 + 11*3+2), 180, 118)
+end
+
 Engine = {
 	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update}, 
 	_draw = {GameState.draw, Semaphore.draw, Player.draw}, 
-	_uidraw = {shopMenu.draw}
+	_uidraw = {shopMenu.draw, printSkystuff}
 }
 
 function Engine:init()
