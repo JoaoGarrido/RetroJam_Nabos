@@ -63,26 +63,23 @@ end
 
 function swapPalette(tilePaletteSelected)
     if tilePaletteSelected == 0 then
-        tilePaletteSelected = 1
-
         for i = 1, #paletteSprites do 
-            paletteTiles[i][0] = peek(0x3fc0 + 3*(i-1))
-            poke(0x3fc0 + 3 * (i-1), paletteSprites[i][0])
-            paletteTiles[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
-            poke(0x3fc0 + 3 * (i-1) + 1, paletteSprites[i][0] + 1)
-            paletteTiles[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
-            poke(0x3fc0 + 3 * (i-1) + 2, paletteSprites[i][0] + 2)
+            paletteTiles[i][0] = peek(0x3fc0 + 3*(i))
+            poke(0x3fc0 + 3 * (i), paletteSprites[i][0])
+            paletteTiles[i][1] = peek(0x3fc0 + 3*(i) + 1)
+            poke(0x3fc0 + 3 * (i) + 1, paletteSprites[i][0] + 1)
+            paletteTiles[i][2] = peek(0x3fc0 + 3*(i) + 2)
+            poke(0x3fc0 + 3 * (i) + 2, paletteSprites[i][0] + 2)
         end
     else
-        tilePaletteSelected = 0
 
         for i = 1, #paletteTiles do 
-            paletteSprites[i][0] = peek(0x3fc0 + 3*(i-1))
-            poke(0x3fc0 + 3 * (i-1), paletteTiles[i][0])
-            paletteSprites[i][1] = peek(0x3fc0 + 3*(i-1) + 1)
-            poke(0x3fc0 + 3 * (i-1) + 1, paletteTiles[i][0] + 1)
-            paletteSprites[i][2] = peek(0x3fc0 + 3*(i-1) + 2)
-            poke(0x3fc0 + 3 * (i-1) + 2, paletteTiles[i][0] + 2)
+            paletteSprites[i][0] = peek(0x3fc0 + 3*(i))
+            poke(0x3fc0 + 3 * (i), paletteTiles[i][0])
+            paletteSprites[i][1] = peek(0x3fc0 + 3*(i) + 1)
+            poke(0x3fc0 + 3 * (i) + 1, paletteTiles[i][0] + 1)
+            paletteSprites[i][2] = peek(0x3fc0 + 3*(i) + 2)
+            poke(0x3fc0 + 3 * (i) + 2, paletteTiles[i][0] + 2)
         end
     end
 end
@@ -475,6 +472,8 @@ end
 
 function shopMenu.draw()
 	if (shopMenu.enabled == 1) then
+        --swapPalette(0)
+
 		rect(50, 17, 140, 90, 3) --menu background -- brown?
 		rectb(50, 17, 140, 90, 4) --menu border --white
 
@@ -509,6 +508,8 @@ function shopMenu.draw()
         rectb(120 - 30, 136 - 28, 60, 10, 4)
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
+
+        --swapPalette(1)
 	end
 end
 
@@ -543,7 +544,6 @@ end
 function Engine:draw()
 	cls(11)
     
-	--map((Level.LevelNumber%8)*30,  Level.reflected*17 + Level.LevelNumber//8*34)
 	if self._draw == nil then
 		return
 	end
