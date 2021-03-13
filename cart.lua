@@ -60,26 +60,38 @@ end
 -- game_state:
 	--0 -> Game scene
 	--1 -> Shop
-
-	--2 -> Menu
+	--2 -> Victory screen
+	--3 -> Lost screen
 --running_state: 0->paused | 1->running
---level: level-identifier
+--level: level id
 state_vars = {game_state = 0, running_state = 1, level = 0}
 
-Menu_enum = {"Game scene", "Shop", "New game"}
-
-function Menu_enum.update()	
-	if (state_vars.game_state == 0) then
+function Menu_enum.update()
+	if (state_vars.game_state == 0) then	--game scene
 		
-		if(keyp(49))	then --TAB to change to Shop
-			state_vars.game_state = 1
-		elseif (keyp(16)) then --P for pause
+		if (keyp(16)) then 	--P for pause
 			state_vars.running_state = (state_vars.running_state + 1) % 2
 		end
-	
-	elseif (state_vars.game_state == 1) then
+		
+		if(Player.fireState == 2 and state_vars.level < 4) then 	--before last level
+			resetState()
+			state_vars.level = state_vars.level + 1
+		elseif(Player.fireState == 2 and state_vars.level == 4) then--last level and won
+			resetState()
+			state_vars.game_state = 2
+		elseif (Player.fireState > 2 or Player.fireState == 1) then	--died
+			resetState()
+			state_vars.game_state = 3
+		end
 
-		if(keyp(49)) then --TAB to change to GameScene 
+	elseif (state_vars.game_state == 1)	then--shop
+
+
+
+	else 									--victory/losing screen
+
+		if (keyp(10)) then --PLACEHOLDER for restart
+			state_vars.level = 0
 			state_vars.game_state = 0
 		end
 
@@ -87,20 +99,34 @@ function Menu_enum.update()
 end
 
 function Menu_enum.draw()
-	if (state_vars.game_state == 0) then
-
-		print(Menu_enum[1],20, 5)
+	if(state_vars.game_state == 0) then
+		print("Game scene", 60, 80)
 		if(state_vars.running_state == 0) then
 			print("PAUSED", 30, 20)
 		end
-	elseif (state_vars.game_state == 1) then
-	
-		print(Menu_enum[2],20, 5)
-    
-	end
 
-    
-    
+		if (state_vars.level == 0) then
+			--map()
+			print("Level 0", 60, 60)
+		elseif (state_vars.level == 1) then
+			print("Level 1", 60, 60)
+		elseif (state_vars.level == 2) then
+			print("Level 2", 60, 60)
+		elseif (state_vars.level == 3) then
+			print("Level 3", 60, 60)
+		elseif (state_vars.level == 4) then
+			print("Level 4", 60, 60)
+		end
+
+	elseif (state_vars.game_state == 1) then
+		print("Shop", 60, 80)
+	elseif (state_vars.game_state == 2) then
+		print("Victory", 60, 80)
+		print("Press PLACEHOLDER to restart")
+	elseif (state_vars.game_state == 3) then
+		print("Lost", 60, 80)
+		print("Press PLACEHOLDER to restart")
+	end    
 end
 
 function PauseMenu()
@@ -114,7 +140,8 @@ end
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 
-Player = {enabled = 1, reactionSpeed = 0, fireState = 0} --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
+--fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
+Player = {enabled = 1, reactionSpeed = 0, fireState = 0} 
 Semaphore = {enabled = 1, initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
 
 function Player.init()
@@ -166,6 +193,7 @@ function Semaphore.init()
     Semaphore.initDelay = math.random(60, 180)
     Semaphore.wasActivated = 0
     Semaphore.currTime = 0
+	Semaphore.opponentHasFired = 0
 end
 
 function Semaphore.update()
@@ -201,6 +229,11 @@ function Semaphore.draw()
 
         print(Semaphore.currTime, 128, 64)
     end
+end
+
+function resetState()
+	Semaphore.init()	
+	Player.init()
 end
 
 --CODE UNTIL HERE-------------------------------------------------------------------------------------------------------------------------------
