@@ -311,13 +311,8 @@ function GameState.draw()
 		map(30, 0, 30, 17, 0, 0, -1, 1, nil)
 		--print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
-<<<<<<< HEAD
 		map(60, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Winner Winner Chicken Dinner", 40, 20)
-=======
-		map(60, 0, 30, 17, 0, 0, -1, 1, nil)
-		--print("Victory", 60, 80)
->>>>>>> 7c308b17bef9f26e97e6eaaddfcc92eed5289ca0
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 3) then
 		map(90, 0, 30, 17, 0, 0, -1, 1, nil)
@@ -327,21 +322,12 @@ function GameState.draw()
 		map(0, 0, 30, 17, 0, 0, -1, 1, nil)
 		--rect(0, 0, 240, 136, 2) --menu background -- brown?
 		--rectb(60, 34, 120, 68, 4) --menu border --white
-<<<<<<< HEAD
 		local stringMainMenu = "Bang Bang"
 		local width = print(stringMainMenu, 0, -6)
 		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 12, false, 2)
 		stringStart = "Press SPACE to start!"
 		local widthStart = print(stringStart, 0, -6)
 		print(stringStart, (240-widthStart)//2, 112, 12, false, 1)
-=======
-		local stringMainMenu = "BIG IRON"
-		local width = print(stringMainMenu, 0, -6)
-		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 15, false, 2)
-		stringStart = "Press SPACE to start!"
-		local widthStart = print(stringStart, 0, -6)
-		print(stringStart, (240-widthStart)//2, (136-50), 15, false, 1)
->>>>>>> 7c308b17bef9f26e97e6eaaddfcc92eed5289ca0
 	end    
 end
 
