@@ -796,15 +796,9 @@ function shopMenu.draw()
         rectb(120 - 30, 136 - 28, 60, 10, 4)
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
-
-<<<<<<< HEAD
 		print("'b' to buy", 186, 110)
 		print("'n' to exit", 186, 120)
         --print(Player.currWeapon)
-=======
-		print("'b' to buy", 188, 30)
-		print("'n' to exit", 188, 40)
->>>>>>> 441a7ccc2889a581801d1546c62eccc54c24fe07
 	end
 end
 
