@@ -433,14 +433,14 @@ function getGunSprite(shoppingListID) --from shopping list id
 end
 
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, a lefty gunslinger, you stop at a bar to have a drink. The local drunkard threatens to kill you.", -1},
-    {"Senile Ms Johnson", 29, "A wild grandma wearing a fake beard blocks your path, your only choice is violence.", 10},
-    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks too old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!", -1},
-    {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this...", 11},
-    {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say.", 13},
-    {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???", 12},
-    {"\"Fastest gun in the west\"", 19, "A man pretending to be the Silver Rider approaches you! You know it not to be true as the Silver Rider doesn't have a triple chin.", 18},
-    {"The Silver Rider", 11, "Finally! The climax of this adventure! Will you succeed in avenging your family?", 19}
+    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, a lefty gunslinger, you stop at a bar to have a drink. The local drunkard threatens to kill you.", -1, 1},
+    {"Senile Ms Johnson", 29, "A wild grandma wearing a fake beard blocks your path, your only choice is violence.", 10, 2},
+    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks too old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!", -1, 5},
+    {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this...", 11, 10},
+    {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say.", 13, 20},
+    {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???", 12, 35},
+    {"\"Fastest gun in the west\"", 19, "A man pretending to be the Silver Rider approaches you! You know it not to be true as the Silver Rider doesn't have a triple chin.", 18, 50},
+    {"The Silver Rider", 11, "Finally! The climax of this adventure! Will you succeed in avenging your family?", 19, 200}
 }
 
 function printBackStory(string, x, y, l) --l line width
@@ -482,9 +482,18 @@ end
 function shotSFX(weapon)
     if(weapon == -1) then --default pistol
         sfx(0)
+    elseif weapon == 10 then
+        sfx(24)
     elseif weapon == 11 or weapon == 12 or weapon == 14 or weapon == 16 then
+        sfx(20)
+    elseif weapon == 13 then
+        sfx(21)
+    elseif weapon == 15 then
+        sfx(22)
     elseif weapon == 17 then --grenade sound
         sfx(16)
+    elseif weapon == 18 then 
+        sfx(23)
     elseif weapon == 19 then
         sfx(19)
     else
@@ -502,6 +511,7 @@ function Player.update()
 					GameState.battle = 2
                 else
                     Player.fireState = 2 -- fired before opponent
+                    dollars = dollars + opponents[GameState.level+1][5]
 					GameState.battle = 1
                 end
             else
@@ -666,7 +676,7 @@ function actionGameScene(p)
 	Player.enabled = p
 end
 
-dollars = 500
+dollars = 0
 shoppingList = { --bought, name, price, sprite?
     --Consumables (?) --add lives?
     {0, "Watermelon", 5, 0464},
@@ -1190,6 +1200,10 @@ end
 -- 016:03000300030003000300030003000300030003000300030003000300130023003300430053006300730083009300a300a300b300d300e300f300f300404000000000
 -- 019:00f700f700e700e700e700d700d700c700c700b700a7009700870077006700671057204620363025402450146003700380029001a001c001d000f00042b000000000
 -- 020:06e006e006e006e006e006e006e006e006d006c006b006a006a00690068006701660265026403630462056206610760086009600a600c600d600f600424000000000
+-- 021:03070307030703070307030703070307030703070307030703070307130723073307430753076307730783079307a307a307b307d307e307f307f307304000000000
+-- 022:6300632053405370438043a023c013d003e003e003e003d003c003b0139023703360434053306320731083009300a300b300c300d300e300f300f300309000000000
+-- 023:6300632053405370438043a023c013d003e003e003e003d003c003b0139023703360434053306320731083009300a300b300c300d300e300f300f300500000000000
+-- 024:1700070007100727073707570777077707a707c707d707d707e717d727c737b74797677777478737a727a717c700d700e700f700f700f700f700f700602000000000
 -- </SFX>
 
 -- <PATTERNS>
