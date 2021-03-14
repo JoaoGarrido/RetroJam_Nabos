@@ -698,16 +698,16 @@ shoppingList = { --bought, name, price, sprite?
     {0, "Sandwich", 10, 0472},
     {0, "Scotch", 30, 0473},
     --Weapons
-    {0, "Duck Head", 50, 0432}, --10
-    {0, "Crossbow", 50, 0434},
-    {0, "SlingShot", 50, 452},
-    {0, "Shiny Revolver", 45, 0448},
-    {0, "Marble fade", 45, 0449},
-    {0, "Thomson", 45, 0450}, --15
-    {0, "Poison Kunai", 45, 0451},
-    {0, "'Nade", 75, 0435},
-    {0, "Uzi", 75, 436},
-    {0, "Ray gun", 150, 0433}, --19
+    {0, "Duck Head", 20, 0432}, --10
+    {0, "Crossbow", 30, 0434},
+    {0, "SlingShot", 10, 452},
+    {0, "Shiny Revolver", 50, 0448},
+    {0, "Marble fade", 50, 0449},
+    {0, "Thomson", 70, 0450}, --15
+    {0, "Poison Kunai", 70, 0451},
+    {0, "'Nade", 100, 0435},
+    {0, "Uzi", 100, 436},
+    {0, "Ray gun", 200, 0433}, --19
 }
 
 shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0, enabled = 0} 
@@ -797,9 +797,14 @@ function shopMenu.draw()
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
 
+<<<<<<< HEAD
 		print("'b' to buy", 186, 110)
 		print("'n' to exit", 186, 120)
         --print(Player.currWeapon)
+=======
+		print("'b' to buy", 188, 30)
+		print("'n' to exit", 188, 40)
+>>>>>>> 441a7ccc2889a581801d1546c62eccc54c24fe07
 	end
 end
 
