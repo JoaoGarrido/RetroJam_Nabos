@@ -221,7 +221,7 @@ function GameState.draw()
 	if(GameState.scene == 0) then
 		print("Game scene", 60, 100)
 
-		map(30*(GameState.level % 8), 17+17*(math.floor(GameState.level/8)), 30, 17, 0, 0, 11, 1, nil) --colorkey 0 (sky stuff)
+		map(30*(GameState.level % 8), 17+17*(math.floor(GameState.level/8)), 30, 17, 0, 0, -1, 1, nil) --colorkey 0 (sky stuff)
 
 		--Debug map
 		if (GameState.level == 0) then
@@ -297,37 +297,37 @@ function GameState.draw()
 		
 		--draw guns
 		if (GameState.battle == 0) then		--waiting battle
-			drawGun(433, default_cowboy.l_x, default_cowboy.y + 20, 0, 1) --left cowboy
-			drawGun(433, default_cowboy.r_x, default_cowboy.y + 20, 1, 1) --right cowboy
+			drawGun(getGunSprite(Player.currWeapon), default_cowboy.l_x, default_cowboy.y + 20, 0, 1) --left cowboy
+			drawGun(getGunSprite(opponents[GameState.level+1][4]), default_cowboy.r_x, default_cowboy.y + 20, 1, 1) --right cowboy
 		elseif (GameState.battle == 1) then --won battle
-			drawGun(433, default_cowboy.l_x + 5, default_cowboy.y + 15, 0, 0)	--left cowboy
-			drawGun(433, default_cowboy.r_x, default_cowboy.y + 30, 1, 2) 		--right cowboy
+			drawGun(getGunSprite(Player.currWeapon), default_cowboy.l_x + 5, default_cowboy.y + 15, 0, 0)	--left cowboy
+			drawGun(getGunSprite(opponents[GameState.level+1][4]), default_cowboy.r_x, default_cowboy.y + 30, 1, 2) 		--right cowboy
 		else								--lost battle	
-			drawGun(433, default_cowboy.l_x, default_cowboy.y + 30, 0, 2)		--left cowboy
-			drawGun(433, default_cowboy.r_x, default_cowboy.y + 15, 1, 0) 		--right cowboy
+			drawGun(getGunSprite(Player.currWeapon), default_cowboy.l_x, default_cowboy.y + 30, 0, 2)		--left cowboy
+			drawGun(getGunSprite(opponents[GameState.level+1][4]), default_cowboy.r_x, default_cowboy.y + 15, 1, 0) 		--right cowboy
 		end
 
 	elseif (GameState.scene == 1) then
-		map(30, 0, 30, 17, 0, 0, 11, 1, nil)
+		map(30, 0, 30, 17, 0, 0, -1, 1, nil)
 		--print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
-		map(60, 0, 30, 17, 0, 0, 11, 1, nil)
+		map(60, 0, 30, 17, 0, 0, -1, 1, nil)
 		--print("Victory", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 3) then
-		map(90, 0, 30, 17, 0, 0, 11, 1, nil)
+		map(90, 0, 30, 17, 0, 0, -1, 1, nil)
 		--print("Lost", 60, 80)
 		print("Press S to restart", 60, 1)
 	elseif (GameState.scene == 4) then
-		map(0, 0, 30, 17, 0, 0, 11, 1, nil)
+		map(0, 0, 30, 17, 0, 0, -1, 1, nil)
 		--rect(0, 0, 240, 136, 2) --menu background -- brown?
 		--rectb(60, 34, 120, 68, 4) --menu border --white
-		local stringMainMenu = "GAYMER"
+		local stringMainMenu = "BIG IRON"
 		local width = print(stringMainMenu, 0, -6)
-		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 1, false, 2)
+		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 15, false, 2)
 		stringStart = "Press SPACE to start!"
 		local widthStart = print(stringStart, 0, -6)
-		print(stringStart, (240-widthStart)//2, (136-6)//2, 1, false, 1)
+		print(stringStart, (240-widthStart)//2, (136-50), 15, false, 1)
 	end    
 end
 
@@ -424,15 +424,23 @@ end
 --Duel mechanics------------------------------------------------------
 --Player----------------------------------------
 
+function getGunSprite(shoppingListID) --from shopping list id
+    if(shoppingListID >= 10 and shoppingListID <= #shoppingList) then
+        return shoppingList[shoppingListID][4]
+    else
+        return 448
+    end
+end
+
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, you stop at a bar to have a drink. The local drunkard threatens to kill you."},
-    {"Senile Ms Johnson", 29, "A wild grandma wearing miner clothes blocks your path, your only choice is violence."},
-    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!"},
-    {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this..."},
-    {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say."},
-    {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???"},
-    {"\"Fastest gun in the west\"", 19, "A man pretending to be the Silver Rider approaches you! You know it not to be true as the Silver Rider doesn't have a triple chin."},
-    {"The Silver Rider", 11, "Finally! The climax of this adventure! Will you succeed in avenging your family?"}
+    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, you stop at a bar to have a drink. The local drunkard threatens to kill you.", -1},
+    {"Senile Ms Johnson", 29, "A wild grandma wearing a fake beard blocks your path, your only choice is violence.", 10},
+    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!", -1},
+    {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this...", 11},
+    {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say.", 13},
+    {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???", 12},
+    {"\"Fastest gun in the west\"", 19, "A man pretending to be the Silver Rider approaches you! You know it not to be true as the Silver Rider doesn't have a triple chin.", 18},
+    {"The Silver Rider", 11, "Finally! The climax of this adventure! Will you succeed in avenging your family?", 19}
 }
 
 function printBackStory(string, x, y, l) --l line width
@@ -673,11 +681,11 @@ shoppingList = { --bought, name, price, sprite?
     {0, "SlingShot", 50, 452},
     {0, "Shiny Revolver", 45, 0448},
     {0, "Marble fade", 45, 0449},
-    {0, "Thomson", 45, 0450},
+    {0, "Thomson", 45, 0450}, --15
     {0, "Poison Kunai", 45, 0451},
     {0, "'Nade", 75, 0435},
     {0, "Uzi", 75, 436},
-    {0, "Ray gun", 150, 0433},
+    {0, "Ray gun", 150, 0433}, --19
 }
 
 shopMenu = {capacity = 4, topmostIndex = 1, selectedIndex = 1, canScrollUp = 0, canScrollDown = 0, enabled = 0} 
