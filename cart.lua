@@ -312,12 +312,21 @@ function GameState.draw()
 		--print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
 		map(60, 0, 30, 17, 0, 0, 11, 1, nil)
-		print("Winner Winner Chicken Dinner", 40, 20)
-		print("Press S to restart", 60, 100)
+		print("", 40, 20, 12)
+		local textA = "Winner Winner Chicken Dinner"
+		local width = print(textA, 0, -6)
+		print(textA, (240-width)//2, 10, 12, false, 1)
+		local textB = "Press 'S' to restart"
+		local width = print(textB, 0, -6)
+		print(textB, (240-width)//2, 24, 12)
 	elseif (GameState.scene == 3) then
 		map(90, 0, 30, 17, 0, 0, -1, 1, nil)
-		--print("Lost", 60, 80)
-		print("Press S to restart", 60, 1, 2)
+		local textA = "GAME OVER"
+		local width = print(textA, 0, -6)
+		print(textA, (240-width*2)//2, 10, 2, false, 2)
+		local textB = "Press 'S' to restart"
+		local width = print(textB, 0, -6)
+		print(textB, (240-width)//2, 24, 2)
 	elseif (GameState.scene == 4) then
 		map(0, 0, 30, 17, 0, 0, -1, 1, nil)
 		--rect(0, 0, 240, 136, 2) --menu background -- brown?
@@ -776,8 +785,8 @@ function shopMenu.draw()
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
 
-		print("'b' to buy", 188, 30)
-		print("'n' to exit", 188, 40)
+		print("'b' to buy", 186, 110)
+		print("'n' to exit", 186, 120)
         --print(Player.currWeapon)
 	end
 end
