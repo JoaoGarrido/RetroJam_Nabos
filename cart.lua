@@ -433,9 +433,9 @@ function getGunSprite(shoppingListID) --from shopping list id
 end
 
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, you stop at a bar to have a drink. The local drunkard threatens to kill you.", -1},
+    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, a lefty gunslinger, you stop at a bar to have a drink. The local drunkard threatens to kill you.", -1},
     {"Senile Ms Johnson", 29, "A wild grandma wearing a fake beard blocks your path, your only choice is violence.", 10},
-    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!", -1},
+    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks too old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!", -1},
     {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this...", 11},
     {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say.", 13},
     {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???", 12},
@@ -479,11 +479,13 @@ function Player.init()
     Player.fireState = 0
 end
 
-function Player.shotSFX()
-    if(Player.currWeapon == -1) then --default pistol
+function shotSFX(weapon)
+    if(weapon == -1) then --default pistol
         sfx(0)
-    elseif Player.currWeapon == 17 then --grenade sound
+    elseif weapon == 17 then --grenade sound
         sfx(16)
+    elseif weapon == 19 then
+        sfx(19)
     else
         sfx(0)
     end
@@ -493,7 +495,7 @@ function Player.update()
     if Player.enabled == 1 then 
         if keyp(48) and Player.fireState == 0 then --spacebar
             if Semaphore.wasActivated == 1 then
-                Player.shotSFX() --Shot sfx
+                shotSFX(Player.currWeapon) --Shot sfx
                 if Semaphore.opponentHasFired == 1 then
                     Player.fireState = 3 -- fired after opponent
 					GameState.battle = 2
@@ -714,8 +716,7 @@ function shopMenu.update()
 				sfx(7)
             elseif shoppingList[ shopMenu.selectedIndex][1]==1 and shopMenu.selectedIndex >= 10 then --if gun is already bought just swap
                 Player.currWeapon = shopMenu.selectedIndex
-                Player.shotSFX()
-                --sfx(7)
+                shotSFX(Player.currWeapon)
 			else
 				sfx(6)
             end
@@ -1184,6 +1185,7 @@ end
 -- 012:030003200350037003700380039003900380037003500330031003100310032003400360037003800370037003700360034003200300030003000300175000000000
 -- 013:030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300030003000300308000000000
 -- 016:03000300030003000300030003000300030003000300030003000300130023003300430053006300730083009300a300a300b300d300e300f300f300404000000000
+-- 019:00f700f700e700e700e700d700d700c700c700b700a7009700870077006700671057204620363025402450146003700380029001a001c001d000f00042b000000000
 -- </SFX>
 
 -- <PATTERNS>
