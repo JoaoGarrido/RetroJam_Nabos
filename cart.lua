@@ -215,15 +215,15 @@ function GameState.draw()
 
 		--Debug map
 		if (GameState.level == 0) then
-			print("Level 0", 60, 60)
+		--	print("Level 0", 60, 60)
 		elseif (GameState.level == 1) then
-			print("Level 1", 60, 60)
+		--	print("Level 1", 60, 60)
 		elseif (GameState.level == 2) then
-			print("Level 2", 60, 60)
+		--	print("Level 2", 60, 60)
 		elseif (GameState.level == 3) then
-			print("Level 3", 60, 60)
+		--	print("Level 3", 60, 60)
 		elseif (GameState.level == 4) then
-			print("Level 4", 60, 60)
+		--	print("Level 4", 60, 60)
 		end
 
     
@@ -284,29 +284,52 @@ function GameState.draw()
 			default_cowboy.w,
 			default_cowboy.h
 		)
+		
+		--draw guns
+		if (GameState.battle == 0) then		--waiting battle
+			drawGun(433, default_cowboy.l_x, default_cowboy.y + 20, 0, 1) --left cowboy
+			drawGun(433, default_cowboy.r_x, default_cowboy.y + 20, 1, 1) --right cowboy
+		elseif (GameState.battle == 1) then --won battle
+			drawGun(433, default_cowboy.l_x + 5, default_cowboy.y + 15, 0, 0)	--left cowboy
+			drawGun(433, default_cowboy.r_x, default_cowboy.y + 30, 1, 2) 		--right cowboy
+		else								--lost battle	
+			drawGun(433, default_cowboy.l_x, default_cowboy.y + 30, 0, 2)		--left cowboy
+			drawGun(433, default_cowboy.r_x, default_cowboy.y + 15, 1, 0) 		--right cowboy
+		end
 
 	elseif (GameState.scene == 1) then
 		map(30, 0, 30, 17, 0, 0, 11, 1, nil)
-		print("Shop", 60, 100)
+		--print("Shop", 60, 100)
 	elseif (GameState.scene == 2) then
 		map(60, 0, 30, 17, 0, 0, 11, 1, nil)
-		print("Victory", 60, 80)
+		--print("Victory", 60, 80)
 		print("Press S to restart", 60, 100)
 	elseif (GameState.scene == 3) then
 		map(90, 0, 30, 17, 0, 0, 11, 1, nil)
-		print("Lost", 60, 80)
-		print("Press S to restart", 60, 100)
+		--print("Lost", 60, 80)
+		print("Press S to restart", 60, 1)
 	elseif (GameState.scene == 4) then
 		map(0, 0, 30, 17, 0, 0, 11, 1, nil)
 		--rect(0, 0, 240, 136, 2) --menu background -- brown?
 		--rectb(60, 34, 120, 68, 4) --menu border --white
-		local stringMainMenu = "NAME OF THE GAME"
+		local stringMainMenu = "GAYMER"
 		local width = print(stringMainMenu, 0, -6)
 		print(stringMainMenu, (240-width*2)//2, (136-6)//2 - 50, 1, false, 2)
-		stringStart = "Press btn to start!"
+		stringStart = "Press SPACE to start!"
 		local widthStart = print(stringStart, 0, -6)
 		print(stringStart, (240-widthStart)//2, (136-6)//2, 1, false, 1)
 	end    
+end
+
+function drawGun(id, x, y, flip, rotate)
+	spr(id,
+		x,
+		y, 
+		0,
+		1,
+		flip,
+		rotate
+	)
 end
 
 function goToGameSceneIfKey(key)
@@ -470,24 +493,24 @@ end
 
 function Player.draw()
     if Player.enabled == 1 then
-        print("Fire state:", 0 , 0)
+        --print("Fire state:", 0 , 0)
         
         if Player.fireState == 0 then        -- not yet
-            print("hasn't shot", 64, 0)
+            --print("hasn't shot", 64, 0)
         elseif Player.fireState == 1 then        --early
-            print("shot before time!", 64, 0)
+            --print("shot before time!", 64, 0)
         elseif Player.fireState == 2 then   -- on time
-            print("shot on time!", 64, 0)
+            --print("shot on time!", 64, 0)
         elseif Player.fireState == 3 then  -- late (state 3)
-            print("shot too late...", 64, 0)
+            --print("shot too late...", 64, 0)
         else --shot timeout (state 4)
 			GameState.battle = 2 --HOTFIX SPAGHETTI
-            print("Not quick enought!", 64, 0)
+            --print("Not quick enought!", 64, 0)
         end 
 
-        print(Player.reactionSpeed, 164, 0)
+        --print(Player.reactionSpeed, 164, 0)
 
-        print(targetDayStage, 164, 64) --for sky debug --to remove
+        --print(targetDayStage, 164, 64) --for sky debug --to remove
     end
 end
 
@@ -515,7 +538,7 @@ function drawVisualQueues()
                 soundPlayed = 0
 				--not activated idle animations
 			else
-                trace(soundPlayed)
+                --trace(soundPlayed)
                 if(soundPlayed == 0) then
                     --play sound queue
                     sfx(2)--placeholder sound
@@ -602,13 +625,13 @@ function Semaphore.draw()
     if(Semaphore.enabled == 1) then
         --show visual queue
         if Semaphore.wasActivated == 0 then
-            print("Don't", 0 , 24)
+            --print("Don't", 0 , 24)
         else
-            print("Fire!", 0, 24)
+            --print("Fire!", 0, 24)
         end
-        print(opponents[GameState.level+1][1], 128, 78)
-        print(opponents[GameState.level+1][2], 128, 88)
-        print(Semaphore.currTime, 128, 64)
+        --print(opponents[GameState.level+1][1], 128, 78)
+        --print(opponents[GameState.level+1][2], 128, 88)
+        --print(Semaphore.currTime, 128, 64)
     end
 end
 
