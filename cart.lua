@@ -8,14 +8,13 @@
 t = 0
 UIENABLED = 1
 
-palettTiles = "0418205d275db13e53eec6beffcd75a7f07038b764257179c2711c3014104c28105089b6f4f4f494b0c2566c86000404"
+palettTiles     = "0418205d275db13e53eec6beffcd75a7f07038b764257179c2711c3014104c28105089b6f4f4f494b0c2566c86000404"
 
-palettSprites = "0418205d275dde3e53eec6beffcd7500d60038b76400852829366f3b5dc9753c08d26d08f4f4f494b0c2596589000404"
+palettSprites   = "0418205d275dde3e53eec6beffcd7500d60038b76400852829366f3b5dc9753c08d26d08f4f4f494b0c2596589000404"
 
 runMusic = 1
 
-currPalett = 0 
-function swapPalette()
+function swapPalette(currPalett)
     paladr = 0x3FC0
     if(currPalett == 0) then
         for i=1, palettSprites:len() , 2 do
@@ -28,6 +27,10 @@ function swapPalette()
             paladr=paladr+1
         end
     end
+    
+    currPalett = (currPalett + 1)%2
+
+    trace(currPalett)
 end
 
 --Sky color offset----------------------------------------
@@ -121,6 +124,7 @@ end
 
 timeout = 0
 function GameState.update()
+    swapPalette(1) --lazy af but idgaf
 	if (GameState.scene == 0) then		--game scene
 		
 		if (GameState.battle == 0) then
@@ -175,6 +179,7 @@ function GameState.update()
 
 	elseif (GameState.scene == 1)	then	--shop		
 		--Add buy items logic
+        swapPalette(0)
 		shopMenu.enabled = 1
 		goToGameSceneIfKey(14) --Press N to go to next level
 	elseif (GameState.scene == 4)	then	--main
@@ -233,7 +238,7 @@ function GameState.draw()
         end
 		pressSpaceUI()
 
-		local default_cowboy = {
+        local default_cowboy = {
 			l_x = 0,
 			r_x = 220,
 			y = 100,
@@ -279,6 +284,7 @@ function GameState.draw()
 			default_cowboy.w,
 			default_cowboy.h
 		)
+
 	elseif (GameState.scene == 1) then
 		map(30, 0, 30, 17, 0, 0, 11, 1, nil)
 		print("Shop", 60, 100)
@@ -363,7 +369,7 @@ opponents = { --may need overwritten visual options
     {"Doc Richard", 23},
     {"\"Young\" Galen Young", 21},
     {"\"Fastest gun in the west\"", 19},
-    {"The silver rider", 17}
+    {"The Silver Rider", 11}
 }
 
 --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
@@ -585,8 +591,6 @@ end
 
 function shopMenu.draw()
 	if (shopMenu.enabled == 1) then
-        swapPalette(0)
-
 		rect(50, 17, 140, 90, 3) --menu background -- brown?
 		rectb(50, 17, 140, 90, 4) --menu border --white
 
@@ -621,8 +625,6 @@ function shopMenu.draw()
         rectb(120 - 30, 136 - 28, 60, 10, 4)
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
-
-        swapPalette(1)
 	end
 end
 
