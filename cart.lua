@@ -402,7 +402,7 @@ opponents = { --may need overwritten visual options
 }
 
 --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
-Player = {enabled = 1, reactionSpeed = 0, fireState = 0} 
+Player = {enabled = 1, reactionSpeed = 0, fireState = 0, currWeapon = -1} 
 Semaphore = {enabled = 1, initDelay = 120, wasActivated = 0, currTime = 0, opponentHasFired = 0, opponentTime = 25}
 
 function Player.init()
@@ -410,11 +410,21 @@ function Player.init()
     Player.fireState = 0
 end
 
+function Player.shotSFX()
+    if(Player.currWeapon == -1) then --default pistol
+        sfx(0)
+    elseif Player.currWeapon == 17 then --grenade sound
+        sfx(16)
+    else
+        sfx(0)
+    end
+end
+
 function Player.update()
     if Player.enabled == 1 then 
         if keyp(48) and Player.fireState == 0 then --spacebar
             if Semaphore.wasActivated == 1 then
-				sfx(0) --Shot sfx
+                Player.shotSFX() --Shot sfx
                 if Semaphore.opponentHasFired == 1 then
                     Player.fireState = 3 -- fired after opponent
 					GameState.battle = 2
@@ -460,7 +470,7 @@ function drawVisualQueues()
         if(Semaphore.wasActivated == 0) then
             --not activated idle animations
         else
-            --queue activation
+            --queue activation\ 
         end
     end
     if(GameState.level == 1) then
@@ -564,7 +574,7 @@ shoppingList = { --bought, name, price, sprite?
     {0, "Sandwich", 10, 0472},
     {0, "Scotch", 30, 0473},
     --Weapons
-    {0, "Duck Head", 50, 0432},
+    {0, "Duck Head", 50, 0432}, --10
     {0, "Crossbow", 50, 0434},
     {0, "SlingShot", 50, 452},
     {0, "Shiny Revolver", 45, 0448},
@@ -590,11 +600,20 @@ end
 function shopMenu.update()
 	if (shopMenu.enabled == 1) then
 		if keyp(2) then --b to buy
-            if(dollars > shoppingList[ shopMenu.selectedIndex][3] and shoppingList[ shopMenu.selectedIndex][1]==0) then
+            if(dollars >= shoppingList[ shopMenu.selectedIndex][3] and shoppingList[ shopMenu.selectedIndex][1]==0) then
                 dollars = dollars - shoppingList[shopMenu.selectedIndex][3]
                 shoppingList[shopMenu.selectedIndex][1] = 1
                 --insert item effects here
+                if(shopMenu.selectedIndex < 10) then --if is food
+
+                else -- change current weapon
+                    Player.currWeapon = shopMenu.selectedIndex
+                end
 				sfx(7)
+            elseif shoppingList[ shopMenu.selectedIndex][1]==1 and shopMenu.selectedIndex >= 10 then --if gun is already bought just swap
+                Player.currWeapon = shopMenu.selectedIndex
+                Player.shotSFX()
+                --sfx(7)
 			else
 				sfx(6)
             end
@@ -654,6 +673,8 @@ function shopMenu.draw()
         rectb(120 - 30, 136 - 28, 60, 10, 4)
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
+
+        print(Player.currWeapon)
 	end
 end
 
