@@ -94,9 +94,10 @@ end
 --running: 0->paused | 1->running
 --level: level id
 --battle:
-	--0 -> Waiting for battle
-	--1 -> Won battle
-	--2 -> Lost battle
+	-- -1-> Show text
+	-- 0 -> Waiting for battle
+	-- 1 -> Won battle
+	-- 2 -> Lost battle
 MAX_LEVEL = 7
 GameState = {scene = 4, running = 1, level = 0, battle = 0}
 
@@ -106,7 +107,7 @@ function GameState.init()
 	GameState.scene = 4
 	GameState.running = 1
 	GameState.level = 0
-	GameState.battle = 0
+	GameState.battle = -1
 end
 
 previous_battle = GameState.battle
@@ -125,12 +126,22 @@ timeout = 0
 function GameState.update()
     swapPalette(1) --lazy af but idgaf
 	if (GameState.scene == 0) then		--game scene
-		
-		if (GameState.battle == 0) then
+		if (GameState.battle == -1) then --Battle text
+			GameState.scene_text_enabled = 1
+			actionGameScene(0)
+			--Press SPACE to skip text
+			if(keyp(48)) then
+				actionGameScene(1)
+				GameState.scene_text_enabled = 0
+				GameState.battle = 0
+			end
+		elseif (GameState.battle == 0) then	--Waiting for battle 
+			--Run Duel Music
 			if (runMusic == 1) then
 				music(4, 0, 0, false) --duel start
 				runMusic = 0
 			end
+			--Waits for pause
 			if (keyp(16)) then 	--P for pause
 				GameState.running = (GameState.running + 1) % 2
 				if(GameState.running == 1) then
@@ -140,7 +151,6 @@ function GameState.update()
 				end
 				actionGameScene(GameState.running)
 			end
-		
 		elseif (GameState.battle == 1 and GameState.level < MAX_LEVEL) then			--won before last level
 			if (runMusic == 1) then
 				music(2, 0, 0, false) --duel win
@@ -334,11 +344,11 @@ end
 
 function goToGameSceneIfKey(key)
 	if(keyp(key)) then
-		GameState.battle = 0
+		GameState.battle = -1
 		GameState.scene = 0
 		GameState.level = GameState.level + 1
 		shopMenu.enabled = 0
-		actionGameScene(1)
+		GameState.scene_text_enabled = 1
 	end
 end
 
@@ -438,16 +448,18 @@ function displayCharacterStory()
 end
 
 function displayBeforeDuel()
-    rect(30, 17, 180, 112, 10)
-    rectb(30, 17, 180, 112, 4)
-    rectb(32, 19, 176, 108, 4)
+	if (GameState.scene_text_enabled == 1) then
+		rect(30, 17, 180, 112, 10)
+		rectb(30, 17, 180, 112, 4)
+		rectb(32, 19, 176, 108, 4)
 
-    print(opponents[GameState.level+1][1], 120-#opponents[GameState.level+1][1] *3 +2, 40)
+		print(opponents[GameState.level+1][1], 120-#opponents[GameState.level+1][1] *3 +2, 40)
 
-    displayCharacterStory()
+		displayCharacterStory()
 
-    strPressSpaceToDuel = "Press 'space' to duel"
-    print(strPressSpaceToDuel, 120-#strPressSpaceToDuel*3, 110)
+		strPressSpaceToDuel = "Press 'space' to duel"
+		print(strPressSpaceToDuel, 120-#strPressSpaceToDuel*3, 110)
+	end
 end
 
 --fireState: 0 (hasn't fired) / 1 (fired before time) / 2 (fired before opponent) / 3 (fired after opponent) / 4 shot at before shooting
@@ -643,7 +655,6 @@ function actionGameScene(p)
 	Player.enabled = p
 end
 
-
 dollars = 500
 shoppingList = { --bought, name, price, sprite?
     --Consumables (?) --add lives?
@@ -757,7 +768,7 @@ function shopMenu.draw()
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
 
-        print(Player.currWeapon)
+        --print(Player.currWeapon)
 	end
 end
 
@@ -767,7 +778,7 @@ Engine = {
 	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update, changeInMusic}, 
 	_draw = {GameState.draw, Semaphore.draw, Player.draw, drawVisualQueues}, 
-	_uidraw = {shopMenu.draw}
+	_uidraw = {shopMenu.draw, displayBeforeDuel}
 }
 
 function Engine:init()
