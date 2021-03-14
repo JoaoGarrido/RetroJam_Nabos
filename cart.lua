@@ -600,9 +600,10 @@ function drawVisualQueues()
 				spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
 			end
         elseif(GameState.level == 3) then
-			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+			if((GameState.battle == 0 and Semaphore.wasActivated == 0) or GameState.scene_text_enabled == 1) then
                 soundPlayed = 0
 				--not activated idle animations
+				spr(384, 214, 70, 0, 1, 0, 0, 2, 3) --respectful woman
 			else
                 if(soundPlayed == 0) then
                     --play sound queue
@@ -610,7 +611,7 @@ function drawVisualQueues()
                     soundPlayed = 1
                 end
 				--queue activation
-
+				spr(386, 214, 70, 0, 1, 0, 0, 2, 3) --even more respectful woman
 			end
         elseif(GameState.level == 4) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
