@@ -392,7 +392,7 @@ end
 --Player----------------------------------------
 
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 30},
+    {"Old McDuff", 200},
     {"Senile Ms Johnson", 29},
     {"\"Not so old\" Jack", 27},
     {"Crooked John", 25},
@@ -493,16 +493,18 @@ end
 
 --Semaphore----------------------------------------
 
-queuePrev = 0
+soundPlayed = 1
 function drawVisualQueues()
 	if(GameState.scene == 0) then
 		if(GameState.level == 0) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
 				--not activated idle animations
 			else
-                if(queuePrev == 0) then
+                if(soundPlayed == 0) then
                     --play sound queue
-                    --sfx(2)--placeholder sound
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
                 end
 				--queue activation
                 --spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
@@ -510,49 +512,56 @@ function drawVisualQueues()
 			end
 		elseif(GameState.level == 1) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
 				--not activated idle animations
 			else
-                if(queuePrev == 0) then
+                trace(soundPlayed)
+                if(soundPlayed == 0) then
                     --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
                 end
 				--queue activation
 			end
         elseif(GameState.level == 2) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
 				--not activated idle animations
 			else
-                if(queuePrev == 0) then
+                if(soundPlayed == 0) then
                     --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
                 end
 				--queue activation
 				spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
 			end
         elseif(GameState.level == 3) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
 				--not activated idle animations
 			else
-                if(queuePrev == 0) then
+                if(soundPlayed == 0) then
                     --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
                 end
 				--queue activation
 
 			end
         elseif(GameState.level == 4) then
 			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
 				--not activated idle animations
 			else
-                if(queuePrev == 0) then
+                if(soundPlayed == 0) then
                     --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
                 end
 				--queue activation
             end
 		end
-	end
-
-    if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
-        queuePrev = 0
-    else 
-        queuePrev = 1
     end
 end
 
@@ -1122,7 +1131,7 @@ end
 -- <SFX>
 -- 000:779057c047e037f427f617f717f717f717d717c427b1278037606740773087209710a700b700c700c700d700e700f700f700f700f700f700f700f700307000000000
 -- 001:f200f200f20042b502f602f702f722e732b68293e251e210f200f200f200f200f200f200f200f200f200f200f200f200f200f200f200f200f200f200369000000000
--- 002:04e004d004d004d004c004b0049004900490049004800480047004600460045004400430042004100400040004000400040004000400040004000400204000000c00
+-- 002:00e000d000d000d000c000b00090009000900090008000800070006000600050004010302020201030005000600070008000a000b000d000e000f000204000000000
 -- 003:f000f000f000f000f000f000f000f000c010901060305030404040504050407040704080409040a050b050c060b070c090e0c0e0d0f0f000f000f000604000000000
 -- 004:61e061e061e061e061e071e071c081b08190817091409110a100b100c100e100f100f100f100f100f100f100f100f100f100f100f100f100f100f100604000000000
 -- 005:f000f000f01070207050707070a070c070c070907060c040d020e010f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000f000704000000000
