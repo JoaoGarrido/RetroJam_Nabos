@@ -29,8 +29,6 @@ function swapPalette(currPalett)
     end
     
     currPalett = (currPalett + 1)%2
-
-    trace(currPalett)
 end
 
 --Sky color offset----------------------------------------
@@ -87,6 +85,7 @@ end
 --Menu----------------------------------------
 
 --scene:
+	--ID | 	NAME			| MAP BLOCK
 	--0 -> Game scene		| (1,level)
 	--1 -> Shop				| (0,1)
 	--2 -> Victory screen	| (0,2)
@@ -357,7 +356,36 @@ function pauseMenu()
 end
 
 function wonDuel()
+    rect(60, 34, 120, 80, 10) --menu background -- brown?
+    rectb(60, 34, 120, 80, 4) --menu border --white
+	
+	local victoryText = "VICTORY!"
+	local width = print(victoryText, 0, -6)
+	print(victoryText, (240-width)//2, 40)
+	
+	local opp1Text = "Your opponent"
+	width = print(opp1Text, 0, -6)
+	print(opp1Text, (240-width)//2, 50)
+	
+	local opp2Text = "lies dead!"
+	width = print(opp2Text, 0, -6)
+	print(opp2Text, (240-width)//2, 58)
+	
+	local shop1Text = "Press 's'"
+	width = print(shop1Text, 0, -6)
+	print(shop1Text, (240-width)//2, 78)
 
+	local shop2Text = "to go to shop"
+	width = print(shop2Text, 0, -6)
+	print(shop2Text, (240-width)//2, 86)
+
+	local duel1Text = "Press 'n'"
+	width = print(duel1Text, 0, -6)
+	print(duel1Text, (240-width)//2, 98)
+
+	local duel2Text = "to go to next duel"
+	width = print(duel2Text, 0, -6)
+	print(duel2Text, (240-width)//2, 106)
 end
 
 --Duel mechanics------------------------------------------------------
