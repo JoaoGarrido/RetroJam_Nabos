@@ -456,41 +456,45 @@ end
 --Semaphore----------------------------------------
 
 function drawVisualQueues()
-    if(GameState.level == 0) then
-        if(Semaphore.wasActivated == 0) then
-            --not activated idle animations
-        else
-            --queue activation
-        end
-    end
-    if(GameState.level == 1) then
-        if(Semaphore.wasActivated == 0) then
-            --not activated idle animations
-        else
-            --queue activation
-        end
-    end
-    if(GameState.level == 2) then
-        if(Semaphore.wasActivated == 0) then
-            --not activated idle animations
-        else
-            --queue activation
-        end
-    end
-    if(GameState.level == 3) then
-        if(Semaphore.wasActivated == 0) then
-            --not activated idle animations
-        else
-            --queue activation
-        end
-    end
-    if(GameState.level == 4) then
-        if(Semaphore.wasActivated == 0) then
-            --not activated idle animations
-        else
-            --queue activation
-        end
-    end
+	if(GameState.scene == 0) then
+			
+		if(GameState.level == 0) then
+			if(Semaphore.wasActivated == 0) then
+				--not activated idle animations
+			else
+				--queue activation
+			end
+		end
+		if(GameState.level == 1) then
+			if(Semaphore.wasActivated == 0) then
+				--not activated idle animations
+			else
+				--queue activation
+			end
+		end
+		if(GameState.level == 2) then
+			if(GameState.battle == 0) then
+				--not activated idle animations
+			else
+				--queue activation
+				spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
+			end
+		end
+		if(GameState.level == 3) then
+			if(Semaphore.wasActivated == 0) then
+				--not activated idle animations
+			else
+				--queue activation
+			end
+		end
+		if(GameState.level == 4) then
+			if(Semaphore.wasActivated == 0) then
+				--not activated idle animations
+			else
+				--queue activation
+			end
+		end
+	end
 end
 
 function Semaphore.init()
@@ -662,7 +666,7 @@ end
 Engine = {
 	_init = {Semaphore.init, Player.init, shopMenu.init, GameState.init}, 
 	_update = {SkyUpdate, Semaphore.update, Player.update, GameState.update, shopMenu.update, changeInMusic}, 
-	_draw = {GameState.draw, Semaphore.draw, Player.draw}, 
+	_draw = {GameState.draw, Semaphore.draw, Player.draw, drawVisualQueues}, 
 	_uidraw = {shopMenu.draw}
 }
 
