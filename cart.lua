@@ -465,46 +465,67 @@ end
 
 --Semaphore----------------------------------------
 
+queuePrev = 0
 function drawVisualQueues()
 	if(GameState.scene == 0) then
-			
 		if(GameState.level == 0) then
-			if(Semaphore.wasActivated == 0) then
+			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
 				--not activated idle animations
 			else
+                if(queuePrev == 0) then
+                    --play sound queue
+                    sfx(2)--placeholder sound
+                end
+				--queue activation
+                spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
+
+			end
+		elseif(GameState.level == 1) then
+			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+				--not activated idle animations
+			else
+                if(queuePrev == 0) then
+                    --play sound queue
+                end
 				--queue activation
 			end
-		end
-		if(GameState.level == 1) then
-			if(Semaphore.wasActivated == 0) then
+        elseif(GameState.level == 2) then
+			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
 				--not activated idle animations
 			else
-				--queue activation
-			end
-		end
-		if(GameState.level == 2) then
-			if(GameState.battle == 0) then
-				--not activated idle animations
-			else
+                if(queuePrev == 0) then
+                    --play sound queue
+                end
 				--queue activation
 				spr(388, 214, 70, -1, 1, 1, 0, 2, 2) --horse fart
 			end
-		end
-		if(GameState.level == 3) then
-			if(Semaphore.wasActivated == 0) then
+        elseif(GameState.level == 3) then
+			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
 				--not activated idle animations
 			else
+                if(queuePrev == 0) then
+                    --play sound queue
+                end
 				--queue activation
+
 			end
-		end
-		if(GameState.level == 4) then
-			if(Semaphore.wasActivated == 0) then
+        elseif(GameState.level == 4) then
+			if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
 				--not activated idle animations
 			else
+                if(queuePrev == 0) then
+                    --play sound queue
+                end
 				--queue activation
-			end
+            end
 		end
 	end
+
+    if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+        queuePrev = 0
+    else 
+        queuePrev = 1
+    end
 end
 
 function Semaphore.init()
