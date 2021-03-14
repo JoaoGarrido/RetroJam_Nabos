@@ -392,14 +392,14 @@ end
 --Player----------------------------------------
 
 opponents = { --may need overwritten visual options
-    {"Old McDuff", 200},
-    {"Senile Ms Johnson", 29},
-    {"\"Not so old\" Jack", 27},
-    {"Crooked John", 25},
-    {"Doc Richard", 23},
-    {"\"Young\" Galen Young", 21},
-    {"\"Fastest gun in the west\"", 19},
-    {"The Silver Rider", 11}
+    {"Old McDuff", 30, "In a quest to avenge your family from the silver rider, you stop at a bar to have a drink. The local drunkard threatens to kill you."},
+    {"Senile Ms Johnson", 29, "A wild grandma wearing miner clothes blocks your path, your only choice is violence."},
+    {"\"Not so old\" Jack", 27, "An old man wearing a colored wig demands you duel him after you tell him he looks old. HE DOES LOOK OLD, WHAT'S HIS PROBLEM?!"},
+    {"Crooked John", 25, "A man with crooked back says you owe him money! Surely there must be a good way to solve this..."},
+    {"Doc Richard", 23, "The town doctor is looking for you for shooting his last patient. \"You can't go shooting my patients\" he says, \"Vengeance!\" you say."},
+    {"\"Young\" Galen Young", 21, "An unusually tall man stumbles in the streets looking for you, are those stilts? Is that simply a kid on stilts???"},
+    {"\"Fastest gun in the west\"", 19, "A man pretending to be the Silver Rider approaches you! You know it not to be true as the Silver Rider doesn't have a triple chin."},
+    {"The Silver Rider", 11, "Finally! The climax of this adventure! Will you succeed in avenging your family?"}
 }
 
 function printBackStory(string, x, y, l) --l line width
@@ -409,10 +409,8 @@ function printBackStory(string, x, y, l) --l line width
 end
 
 function displayCharacterStory()
-    --GameState.level
-    if(GameState.level == 0) then--McDuff
-        back1 = "In a quest to avenge your family from the silver rider, you stop at a bar to have a drink. The local drunkard threatens to kill you."
-        printBackStory(back1, 40, 50, 29)
+    if(GameState.level >= 0 and GameState.level <= 7) then
+        printBackStory(opponents[GameState.level + 1][3], 40, 50, 29)
     end
 end
 
@@ -566,7 +564,7 @@ function drawVisualQueues()
 end
 
 function Semaphore.init()
-    Semaphore.initDelay = math.random(60, 180)
+    Semaphore.initDelay = math.random(100, 500)
     Semaphore.wasActivated = 0
     Semaphore.currTime = 0
 	Semaphore.opponentHasFired = 0
