@@ -98,7 +98,7 @@ end
 	--0 -> Waiting for battle
 	--1 -> Won battle
 	--2 -> Lost battle
-MAX_LEVEL = 4
+MAX_LEVEL = 7
 GameState = {scene = 4, running = 1, level = 0, battle = 0}
 
 function GameState.init()
@@ -239,8 +239,8 @@ function GameState.draw()
 		pressSpaceUI()
 
         local default_cowboy = {
-			l_x = 0,
-			r_x = 220,
+			l_x = 30,
+			r_x = 190,
 			y = 100,
 			colorkey = 0,
 			scale = 1,
@@ -250,16 +250,17 @@ function GameState.draw()
 			w = 2,
 			h = 4,
 		}
+		id_cowboy_base_id = {256, 320, 326}
 		if (GameState.battle == 0 and GameState.running == 1) then
-			l_cowboy_id	= 256
-			r_cowboy_id	= 320
+			l_cowboy_id	= id_cowboy_base_id[1]
+			r_cowboy_id	= id_cowboy_base_id[2+GameState.level%2]
 		elseif (GameState.battle == 1) then
-			l_cowboy_id	= 258
-			r_cowboy_id = 324
+			l_cowboy_id	= id_cowboy_base_id[1] + 2
+			r_cowboy_id	= id_cowboy_base_id[2+GameState.level%2]+4
 			wonDuel()
 		elseif (GameState.battle == 2) then
-			l_cowboy_id	= 260
-			r_cowboy_id	= 322
+			l_cowboy_id	= id_cowboy_base_id[1] + 4
+			r_cowboy_id	= id_cowboy_base_id[2+GameState.level%2]+2
 		elseif(GameState.running == 0) then
 			pauseMenu()
 		end
