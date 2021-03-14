@@ -1,6 +1,6 @@
--- title:  game title
--- author: game developer
--- desc:   short description
+-- title:  Bang Bang
+-- author: Emanuel Castro, JoaoGarrido, José Mendes, Miguel Macedo, Tiago Guedes
+-- desc:   A reaction time based game with a western theme developed in tic80 for RetroJam Porto 2021 
 -- script: lua
 
 ----------------------------------------------------------------------------------------------------------------------------------------
