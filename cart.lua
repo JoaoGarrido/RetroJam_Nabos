@@ -624,7 +624,43 @@ function drawVisualQueues()
                 end
 				--queue activation
             end
-		end
+        elseif(GameState.level == 5) then
+            if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
+                --not activated idle animations
+            else
+                if(soundPlayed == 0) then
+                    --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
+                end
+                --queue activation
+            end
+        elseif(GameState.level == 6) then
+            if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
+                --not activated idle animations
+            else
+                if(soundPlayed == 0) then
+                    --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
+                end
+                --queue activation
+            end
+        elseif(GameState.level == 7) then
+            if(GameState.battle == 0 and Semaphore.wasActivated == 0) then
+                soundPlayed = 0
+                --not activated idle animations
+            else
+                if(soundPlayed == 0) then
+                    --play sound queue
+                    sfx(2)--placeholder sound
+                    soundPlayed = 1
+                end
+                --queue activation
+            end
+        end
     end
 end
 
@@ -797,14 +833,8 @@ function shopMenu.draw()
         print("$", 120-25, 136 -25)
         print(dollars, 120 - 15, 136 - 25)
 
-<<<<<<< HEAD
-		print("'b' to buy", 186, 110)
-		print("'n' to exit", 186, 120)
-        --print(Player.currWeapon)
-=======
 		print("'b' to buy", 188, 30)
 		print("'n' to exit", 188, 40)
->>>>>>> 441a7ccc2889a581801d1546c62eccc54c24fe07
 	end
 end
 
