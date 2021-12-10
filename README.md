@@ -3,6 +3,8 @@ RetroJam 2021 game by team Nabos
 
 ### 3rd Place!!!
 
+[Play the game](https://miguelmmacedo.itch.io/bang-bang)
+
 # Authors
 
 - **João Garrido** - [JoaoGarrido](https://github.com/JoaoGarrido)
