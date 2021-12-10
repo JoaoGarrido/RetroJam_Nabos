@@ -1,7 +1,7 @@
 # RetroJam_Nabos
 RetroJam 2021 game by team Nabos
 
-## 3rd Place!!!
+### 3rd Place!!!
 
 # Authors
 
